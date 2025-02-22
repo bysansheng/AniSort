@@ -78,9 +78,6 @@ PATTERN = [
     },
     ...
 ]
-
-# 额外功能（默认关闭）
-AUTO_DOWNLOAD_COVER = False    # 自动下载封面
 ```
 
 ## 反馈与建议
