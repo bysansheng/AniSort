@@ -25,7 +25,7 @@ AniSort("./xxx").move_files()
 
 然后采用 PLEX 推荐的分类标准：
 
-| PLEX文件夹  | 包含内容类型                  |
+| 文件夹  | 包含内容类型                      |
 |------------|--------------------------------|
 | Interviews | IV（访谈）                     |
 | Trailers   | PV/CM/SPOT/Teaser/Trailer      |
