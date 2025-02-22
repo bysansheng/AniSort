@@ -55,8 +55,9 @@ title (2018)/
 ├── Trailers/
 │   ├── title (2018) - CM.mkv
 │   └── title (2018) - PV.mkv
-├── title (2018) - S01E01.mkv
-└── title (2018) - S01E02.mkv
+├── Season 01
+│   └── title (2018) - S01E01.mkv
+└── └── title (2018) - S01E02.mkv
 ```
 
 ## 配置项
