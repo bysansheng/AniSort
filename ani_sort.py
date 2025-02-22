@@ -122,6 +122,7 @@ class AniSort(object):
             os.rmdir(self.path)
         except OSError:
             shutil.move(self.path, f"./{self.ani_name}/Unknown_Files")
-    
+
+
 if __name__ == "__main__":
     AniSort(input()).move_files()
