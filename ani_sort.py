@@ -13,7 +13,7 @@ class AniSort(object):
     def __init__(self, path: Union[Path, str]) -> None:
         self.patterns = self.compile_patterns()
         self.path: Path = path if isinstance(path, Path) else Path(path)
-        self.ani_info: dict = self.get_ani_info(self.path.name)
+        self.ani_info: dict = self.get_ani_info(self.path。name)
         self.ani_name: str = f'{self.ani_info["name"]} ({self.ani_info["date"]})'
         self.table: dict = {
             str(file): self.normalize(file)
@@ -23,8 +23,8 @@ class AniSort(object):
     def compile_patterns(self) -> dict:
         """预编译正则表达式"""
         return [{
-            "type": p["type"],
-            "regex": re.compile(p["regex"]),
+            "type": p["type"]，
+            "regex": re.compile(p["regex"])，
             "normalize": p["normalize"]
         } for p in PATTERN]
 
@@ -32,7 +32,7 @@ class AniSort(object):
         """获取文件夹内所有文件
         path: 文件路径
         """
-        return [f for f in self.path.rglob("*") if f.is_file()]
+        return [f for f in self.path。rglob("*") if f.is_file()]
     
     def get_ani_info(self, name: str) -> dict:
         """获取番剧的信息
@@ -40,9 +40,9 @@ class AniSort(object):
         """
         try:
             res = requests.get("https://api.themoviedb.org/3/search/tv", params={
-                "query": re.sub(r"\s*\[.*?\]\s*", '', name), "language": "zh-CN"
+                "query": re.sub(r"\s*\[.*?\]\s*"， '', name)， "language": "zh-CN"
             }, headers={
-                "Authorization": f"Bearer {TMDB_API_KEY}",
+                "Authorization": f"Bearer {TMDB_API_KEY}"，
                 "accept": "application/json"
             }, timeout=None)
             res.raise_for_status()
@@ -56,8 +56,8 @@ class AniSort(object):
             raise ValueError("无法在 TMDB 中搜索到该动漫，请更改文件夹名称后再试一次")
         
         return {
-            "name": info["name"],
-            "date": info["first_air_date"].split('-')[0]
+            "name": info["name"]，
+            "date": info["first_air_date"]。split('-')[0]
         }
     
     def parse(self, name: str) -> dict:
@@ -65,7 +65,7 @@ class AniSort(object):
         name: 番剧文件名
         """
         for p in self.patterns:
-            if match := p["regex"].search(name):
+            if match := p["regex"]。search(name):
                 p_type: str = p["type"]
                 season: int = 1
                 number: int = None
@@ -75,17 +75,17 @@ class AniSort(object):
                 elif p_type == "SE_EP":
                     season: int = int(match.group(1))
                     number: int = match.group(2)
-                elif p_type in ["OP/ED", "PV"]:
+                elif p_type in ["OP/ED"， "PV"]:
                     number: int = match.group(2)
                 else:
                     # 特殊处理无数字的 SP/OP 等情况（如 "SP.mkv"）
-                    number: int = match.group(2) or match.group(1)
+                    number: int = match.group(2) 或 match.group(1)
                 return {
                     "type": p_type,
                     "season": season,
-                    "number": int(number) if number and number.isdigit() else None,
-                    "raw_match": match.group(),
-                    "normalize": p["normalize"],
+                    "number": int(number) if number 和 number.isdigit() else None，
+                    "raw_match": match.group()，
+                    "normalize": p["normalize"]，
                 }
             
         return None
@@ -124,5 +124,4 @@ class AniSort(object):
             shutil.move(self.path, f"./{self.ani_name}/Unknown_Files")
     
 if __name__ == "__main__":
-    # AniSort(input()).move_files()
-    AniSort("./[VCB-Studio] SPYxFAMILY")
+    AniSort(input()).move_files()
