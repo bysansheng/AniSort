@@ -25,11 +25,11 @@ AniSort("./xxx").move_files()
 
 然后采用 PLEX 推荐的分类标准：
 
-| 文件夹  | 包含内容类型                      |
-|------------|--------------------------------|
-| Interviews | IV（访谈）                     |
-| Trailers   | PV/CM/SPOT/Teaser/Trailer      |
-| Other      | Menu/NCOP/NCED等               |
+| 文件夹  | 包含内容类型                          |
+|------------|------------------------------------|
+| Interviews | IV（访谈）                          |
+| Trailers   | PV / CM / SPOT / Teaser / Trailer  |
+| Other      | Menu / NCOP / NCED等               |
 
 对于无法识别的文件（如图片、音乐）将丢到 `Unknown_Files` 目录
 
