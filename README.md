@@ -12,9 +12,8 @@ python ani_sort.py
 D:\anime\xxx
 ```
 
-* 在 python 中导入
+* 可在 **ani_sort.py** 的同级目录下进行调用
 ```python
-# 可在 ani_sort 的同级目录下进行调用
 from ani_sort import AniSort
 AniSort("./xxx").move_files()
 ```
