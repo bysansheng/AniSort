@@ -6,13 +6,13 @@
 
 ## 使用方式
 
-在命令行中使用
+* 在命令行中使用
 ```
 python ani_sort.py
 D:\anime\xxx
 ```
 
-在 python 中导入
+* 在 python 中导入
 ```python
 # 可在 ani_sort 的同级目录下进行调用
 from ani_sort import AniSort
@@ -35,7 +35,7 @@ AniSort("./xxx").move_files()
 
 ## 效果
 
-整理前
+* 整理前
 ```bash
 [xxx]title/
 ├── CDs/
@@ -47,7 +47,7 @@ AniSort("./xxx").move_files()
 └── [xxx]title - S01E02.mkv
 ```
 
-整理后
+* 整理后
 ```bash
 title (2018)/
 ├── Other/
@@ -82,7 +82,6 @@ PATTERN = [
 
 # 额外功能（默认关闭）
 AUTO_DOWNLOAD_COVER = False    # 自动下载封面
-AUTO_DOWNLOAD_SUBTITLES = False  # 自动下载字幕
 ```
 
 ## 反馈与建议
