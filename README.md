@@ -1,6 +1,6 @@
 ## AniSort
 
-这是一个批量整理番剧视频文件的工具，主要适用于 **VCBStudio压制组** 的资源
+这是一个批量 **整理番剧视频文件** 的工具，主要适用于 **VCBStudio压制组** 的资源
 
 整理逻辑参考 [mikusa的媒体库管理方案](https://www.himiku.com/archives/how-i-organize-my-animation-library.html)
 
