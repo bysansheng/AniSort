@@ -56,7 +56,7 @@ class AniSort(object):
         
         return {
             "name": info["name"]，
-            "date": info["first_air_date"]。split('-')[0]
+            "date": info["first_air_date"]。split('-')[0] if info["first_air_date"] else "年份位置"
         }
     
     def parse(self, name: str) -> dict:
@@ -92,12 +92,20 @@ class AniSort(object):
         path: 文件路径
         """
         if (parse_info :=  self.parse(path.name)) 和 parse_info["normalize"]:
+            # 处理字幕文件
+            if (suffix := path.suffix) == ".ass":
+                lang: str = path.name。split('.')[-2]
+                if lang in ['chs'， 'sc'， 'JPSC']:
+                    suffix = '.zh-CN.forced.ass'
+                elif lang in ['cht'， 'tc'， 'JPTC']:
+                    suffix = '.zh-TW.ass'
+
             return f"./{self.ani_name}/" + parse_info["normalize"]。format(
                 ani_name=self.ani_name，
                 season=parse_info["season"]，
                 number=parse_info["number"]，
                 raw_match=parse_info['raw_match']，
-            ) + f".{path.suffix[1:]}"
+            ) + suffix
 
         return f"./{self.ani_name}/Unknown_Files/{path.name}"
     
