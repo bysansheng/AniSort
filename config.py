@@ -33,13 +33,13 @@ PATTERN: list = [
     }，
     {
         "type": "EP"，
-        "regex": r"(?i)\b(\d{2,3})(?:v\d+)?\.(?:mkv|mp4)"，
+        "regex": r"(?i)\b(\d{2,3})(?:v\d+)?\.(?:mkv|mp4|mka|ass)"，
         "normalize": "Season {season:02d}/{ani_name} - S{season:02d}E{number:02d}"，
         "priority": 3
     }，
     {
         "type": "EP"，
-        "regex": r"(?i)\[(\d{2,3})\].*\.(?:mkv|mp4)"，
+        "regex": r"(?i)\[(\d{2,3})\].*\.(?:mkv|mp4|mka|ass)"，
         "normalize": "Season {season:02d}/{ani_name} - S{season:02d}E{number:02d}"，
         "priority": 3
     }，
@@ -76,14 +76,6 @@ PATTERN: list = [
         "priority": 4
     }，
 
-    # 收藏
-    {
-        "type": "Collection"，
-        "regex": r"(?i)(PV&CM Collection)[ _-]?(\d*)"，
-        "normalize": None，
-        "priority": 4
-    }，
-
     # 宣传片
     {
         "type": "PV"，
@@ -113,6 +105,14 @@ PATTERN: list = [
         "type": "MV"，
         "regex": r"(?i)\b(MV)[ _-]?(\d*)"，
         "normalize": "Other/{ani_name} - MV{number:02d}"，
+        "priority": 4
+    }，
+
+    # 屏蔽
+    {
+        "type": "Collection"，
+        "regex": r"(?i)(PV&CM Collection)[ _-]?(\d*)"，
+        "normalize": None，
         "priority": 4
     }，
 ]
