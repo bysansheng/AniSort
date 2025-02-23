@@ -20,17 +20,31 @@ AniSort("./xxx").move_files()
 
 ## 整理流程
 
-首先通过 **TMDB API** 与 **主文件夹的名称** 获取番剧信息
+首先通过 **TMDB API** 与 **原文件夹的名称** 获取番剧信息
 
 再根据元数据对可识别的文件进行格式化重命名
 
-然后采用 PLEX 推荐的分类标准：
+然后采用 PLEX 推荐的分类标准进行分类：
 
 | 文件夹  | 包含内容类型                          |
 |------------|------------------------------------|
 | Interviews | IV（访谈）                          |
 | Trailers   | PV / CM / SPOT / Teaser / Trailer  |
 | Other      | Menu / NCOP / NCED等               |
+
+最后会将所有文件移动到 **新文件夹** 内
+
+并且会在 **新文件夹** 内生成 **Comparison_Table.txt**，该文本内写入了所有文件更改前后的名称，用以对照是否有识别错误
+
+```Comparison_Table.txt
+Season 01/title (2018) - S01E01.mkv
+└── [xxx]title - 01.mkv
+
+Season 01/title (2018) - S01E02.mkv
+└── [xxx]title - S01E02.mkv
+
+……
+```
 
 对于无法识别的文件（如图片、音乐）将丢到 `Unknown_Files` 目录
 
@@ -60,6 +74,7 @@ title (2018)/
 ├── Season 01
 │   └── title (2018) - S01E01.mkv
 └── └── title (2018) - S01E02.mkv
+└── Comparison_Table.txt
 ```
 
 ## 配置项
