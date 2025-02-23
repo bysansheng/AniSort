@@ -36,7 +36,7 @@ AniSort("./xxx").move_files()
 
 并且会在 **新文件夹** 内生成 **Comparison_Table.txt**
 
-该文本内写入了所有文件更改前后的名称，用以对照是否有识别错误
+该文本内写入了所有文件更改前后的名称，可以对照是否有识别错误
 
 ```txt
 Season 01/title (2018) - S01E01.mkv
