@@ -108,13 +108,19 @@ PATTERN: list = [
         "priority": 4
     }，
 
-    # 屏蔽
+    # Collection
     {
         "type": "Collection"，
-        "regex": r"(?i)(PV&CM Collection)[ _-]?(\d*)"，
-        "normalize": None，
+        "regex": r"(?i)(CM Collection)[ _-]?(\d*)"，
+        "normalize": "Other/{ani_name} - Collection{number:02d}"，
         "priority": 4
     }，
+    {
+        "type": "Collection"，
+        "regex": r"(?i)(PV Collection)[ _-]?(\d*)"，
+        "normalize": "Trailers/{ani_name} - Collection{number:02d}"，
+        "priority": 4
+    }
 ]
 
 PATTERN.sort(key=lambda x: x['priority'])
