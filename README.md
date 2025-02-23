@@ -36,14 +36,12 @@ AniSort("./xxx").move_files()
 
 并且会在 **新文件夹** 内生成 **Comparison_Table.txt**，该文本内写入了所有文件更改前后的名称，用以对照是否有识别错误
 
-```Comparison_Table.txt
+```txt
 Season 01/title (2018) - S01E01.mkv
 └── [xxx]title - 01.mkv
 
 Season 01/title (2018) - S01E02.mkv
 └── [xxx]title - S01E02.mkv
-
-……
 ```
 
 对于无法识别的文件（如图片、音乐）将丢到 `Unknown_Files` 目录
