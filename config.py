@@ -1,6 +1,6 @@
 # 请前往 TMDB 注册 api_key
 # https://developer.themoviedb.org/reference
-TMDB_API_KEY: str = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1OTBlNjBjYjVlMWFiNWJjMmMzNTczMWU5YjcyMWZiNSIsIm5iZiI6MTczOTg5NDIxMS4zNTAwMDAxLCJzdWIiOiI2N2I0YWRjM2Y0N2E4YjkyMmE2ZGVjM2MiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.DAxoWFfmDAi9qSmr5owIAiyYotDxmVTxSvAghEVdJ48"
+TMDB_API_KEY: str = "your_api_key_here"
 
 # 分类规则 
 PATTERN: list = [
