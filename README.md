@@ -82,8 +82,8 @@ title (2018)/
 可在 **config.py** 中进行配置的修改
 
 ```python
-# API配置（必需），需自行注册 tmdb 的 api_key
-# https://developer.themoviedb.org/reference
+# 请前往 TMDB 注册 api_key (32位的那个)
+# https://www.themoviedb.org/settings/api
 TMDB_API_KEY = "your_api_key_here" 
 
 # 分类规则（可自行编写和添加）
