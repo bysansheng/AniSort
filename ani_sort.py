@@ -40,7 +40,7 @@ class AniSort(object):
         """
         try:
             res = requests.get("https://api.themoviedb.org/3/search/tv", params={
-                "query": re.sub(r"\s*\[.*?\]\s*"， '', name)， "language": "zh-CN"
+                "query": re.sub(r"\s*(\[|\().*?(\]|\))\s*"， '', name)， "language": "zh-CN"
             }, headers={
                 "Authorization": f"Bearer {TMDB_API_KEY}"，
                 "accept": "application/json"
@@ -91,7 +91,7 @@ class AniSort(object):
         """获取文件规范化命名
         path: 文件路径
         """
-        if parse_info :=  self.parse(path.name) 和 parse_info["normalize"]:
+        if (parse_info :=  self.parse(path.name)) 和 parse_info["normalize"]:
             return f"./{self.ani_name}/" + parse_info["normalize"]。format(
                 ani_name=self.ani_name，
                 season=parse_info["season"]，
