@@ -40,11 +40,9 @@ class AniSort(object):
         """
         try:
             res = requests.get("https://api.themoviedb.org/3/search/tv", params={
-                "query": re.sub(r"\s*(\[|\().*?(\]|\))\s*", '', name), "language": "zh-CN"
-            }, headers={
-                "Authorization": f"Bearer {TMDB_API_KEY}",
-                "accept": "application/json"
-            }, timeout=None)
+                "query": re.sub(r"\s*(\[|\().*?(\]|\))\s*", '', name), "language": "zh-CN",
+                "api_key": TMDB_API_KEY
+            }, headers={"accept": "application/json"}, timeout=None)
             res.raise_for_status()
         except:
             raise ValueError("无法连接到 TMDB，请更换网络环境后再试一次")
