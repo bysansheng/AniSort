@@ -9,7 +9,7 @@
 * 在命令行中使用
 ```
 python ani_sort.py
-D:\anime\xxx
+请输入文件夹路径: D:\anime\xxx
 ```
 
 * 可在 **ani_sort.py** 的同级目录下进行调用
