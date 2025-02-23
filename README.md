@@ -34,7 +34,9 @@ AniSort("./xxx").move_files()
 
 最后会将所有文件移动到 **新文件夹** 内
 
-并且会在 **新文件夹** 内生成 **Comparison_Table.txt**，该文本内写入了所有文件更改前后的名称，用以对照是否有识别错误
+并且会在 **新文件夹** 内生成 **Comparison_Table.txt**
+
+该文本内写入了所有文件更改前后的名称，用以对照是否有识别错误
 
 ```txt
 Season 01/title (2018) - S01E01.mkv
