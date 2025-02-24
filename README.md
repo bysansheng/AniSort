@@ -1,6 +1,6 @@
 ## AniSort
 
-这是一个批量 **整理番剧视频文件** 的工具，主要适用于 **VCBStudio压制组** 的资源
+这是一个批量 **整理番剧文件** 的工具，通过正则表达式进行匹配
 
 整理逻辑参考 [mikusa的媒体库管理方案](https://www.himiku.com/archives/how-i-organize-my-animation-library.html)
 
@@ -10,6 +10,9 @@
 ```
 python ani_sort.py
 请输入文件夹路径: D:\anime\xxx
+
+python ani_sort.py
+请输入文件夹路径: ./anime\xxx
 ```
 
 * 可在 **ani_sort.py** 的同级目录下进行调用
