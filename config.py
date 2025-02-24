@@ -2,6 +2,9 @@
 # https://www.themoviedb.org/settings/api
 TMDB_API_KEY: str = "your_api_key_here"
 
+# 是否手动选择 TMDB 的搜索结果
+TMDB_SELECTED: bool = False
+
 # 分类规则 
 PATTERN: list = [
     # 特典
@@ -120,6 +123,14 @@ PATTERN: list = [
         "regex": r"(?i)(PV Collection)[ _-]?(\d*)",
         "normalize": "Trailers/{ani_name} - Collection{number:02d}",
         "priority": 4
+    },
+
+    # 保留标签
+    {
+        "type": "None",
+        "regex": r"(?i)\s(\[.+?(\d*)\])",
+        "normalize": "Other/{ani_name} -{raw_match}",
+        "priority": 114514
     }
 ]
 
