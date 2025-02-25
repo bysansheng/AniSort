@@ -138,7 +138,7 @@ class AniSort(object):
         # 生成 .ignore 文件
         if GENERATE_IGNORE_FILE:
             for root, _, _ in os.walk(f"./{self.ani_name}"):
-                if os.path.basename(root) in ["Other", "Interviews"]:
+                if not(re.match(rf"^(Season\s\d*|Trailers|{self.ani_name})$", os.path.basename(root))):
                     with open(os.path.join(root, ".ignore"), 'w') as ignore_file:
                         ignore_file.write('')
     
