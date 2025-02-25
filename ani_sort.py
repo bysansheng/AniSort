@@ -5,7 +5,13 @@ import shutil
 import os
 import re
 
-from config import TMDB_API_KEY, PATTERN, TMDB_SELECTED
+from config import (
+    TMDB_API_KEY,
+    PATTERN,
+    TMDB_SELECTED,
+    GENERATE_COMPARISON_TABLE,
+    GENERATE_IGNORE_FILE
+)
 
 
 class AniSort(object):
@@ -110,7 +116,7 @@ class AniSort(object):
 
             return f"./{self.ani_name}/" + parse_info["normalize"].format(
                 ani_name=self.ani_name,
-                raw_match=parse_info["raw_match"],
+                raw_match=parse_info["raw_match"].strip('[').strip(']') if parse_info["type"] == "Label" else  parse_info["raw_match"],
                 season=parse_info["season"],
                 number=parse_info["number"]
             ) + suffix
@@ -128,6 +134,13 @@ class AniSort(object):
         for src, dest in self.table.items():
             if not(os.path.isfile(dest)):
                 shutil.move(src, dest)
+
+        # 生成 .ignore 文件
+        if GENERATE_IGNORE_FILE:
+            for root, _, _ in os.walk(f"./{self.ani_name}"):
+                if os.path.basename(root) in ["Other", "Interviews"]:
+                    with open(os.path.join(root, ".ignore"), 'w') as ignore_file:
+                        ignore_file.write('')
     
         # 删除原文件夹
         if self.get_all_files(self.path):
@@ -136,11 +149,12 @@ class AniSort(object):
             shutil.rmtree(self.path)
 
         # 写入对照表
-        with open(f"./{self.ani_name}/Comparison_Table.txt", "w", encoding="utf-8") as file:
-            file.write("\n\n".join(
-                "{}\n└── {}".format('/'.join(Path(v).parts[-2:]), Path(k).name)
-                for k, v in self.table.items()
-            ))
+        if GENERATE_COMPARISON_TABLE:
+            with open(f"./{self.ani_name}/Comparison_Table.txt", "w", encoding="utf-8") as file:
+                file.write("\n\n".join(
+                    "{}\n└── {}".format('/'.join(Path(v).parts[-2:]), Path(k).name)
+                    for k, v in self.table.items()
+                ))
 
 
 if __name__ == "__main__":
