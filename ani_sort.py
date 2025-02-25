@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Union
+import difflib
 import requests
 import shutil
 import os
@@ -38,7 +39,11 @@ class AniSort(object):
         """获取文件夹内所有文件
         path: 文件路径
         """
-        return [f for f in self.path.rglob("*") if f.is_file()]
+        files: list = [f for f in self.path.rglob("*") if f.is_file()]
+    
+        path_str = str(path)
+    
+        return sorted(files, key=lambda f: difflib.SequenceMatcher(None, str(f), path_str).ratio(), reverse=True)
     
     def get_ani_info(self, name: str) -> dict:
         """获取番剧的信息
@@ -116,7 +121,7 @@ class AniSort(object):
 
             return f"./{self.ani_name}/" + parse_info["normalize"].format(
                 ani_name=self.ani_name,
-                raw_match=parse_info["raw_match"].strip('[').strip(']') if parse_info["type"] == "Label" else  parse_info["raw_match"],
+                raw_match=parse_info["raw_match"].strip().rstrip('[').lstrip(']') if parse_info["type"] == "Label" else  parse_info["raw_match"],
                 season=parse_info["season"],
                 number=parse_info["number"]
             ) + suffix
@@ -134,19 +139,21 @@ class AniSort(object):
         for src, dest in self.table.items():
             if not(os.path.isfile(dest)):
                 shutil.move(src, dest)
+            else:
+                self.table[src] = f"Unknown_Files/{dest.split('/')[-1]}"
 
-        # 生成 .ignore 文件
-        if GENERATE_IGNORE_FILE:
-            for root, _, _ in os.walk(f"./{self.ani_name}"):
-                if not(re.match(rf"^(Season\s\d*|Trailers|{self.ani_name})$", os.path.basename(root))):
-                    with open(os.path.join(root, ".ignore"), 'w') as ignore_file:
-                        ignore_file.write('')
-    
         # 删除原文件夹
         if self.get_all_files(self.path):
             shutil.move(self.path, f"./{self.ani_name}/Unknown_Files")
         else:
             shutil.rmtree(self.path)
+        
+        # 生成 .ignore 文件
+        if GENERATE_IGNORE_FILE:
+            for root, _, _ in os.walk(f"./{self.ani_name}"):
+                if not(re.match(r"^(Season\s\d*|Trailers)$", os.path.basename(root))) and os.path.basename(root) != self.ani_name:
+                    with open(os.path.join(root, ".ignore"), 'w') as ignore_file:
+                        ignore_file.write('')
 
         # 写入对照表
         if GENERATE_COMPARISON_TABLE:
