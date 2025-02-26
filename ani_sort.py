@@ -88,17 +88,19 @@ class AniSort(object):
         for p in self.patterns:
             if match := p["regex"].search(name):
                 season: int = 1
+                match1 = match[1]
 
                 if p["type"] == "SE_EP":
-                    season, number = int(match[1]), match[2]
+                    season, match2 = int(match[1]), match[2]
                 else:
                     # 特殊处理无数字的 SP/OP 等情况（如 "SP.mkv"）
-                    number: int = match[1] if p["type"]  == "EP" else match[2] or match[1]
+                    match2 = match[1] if p["type"]  == "EP" else match[2] or match[1]
 
                 return {
                     **p,
-                    "season": season,
-                    "number": int(number) if number.isdigit() else 0,
+                    "season": f"{season:02d}",
+                    "match1": match1,
+                    "match2": f"{int(match2):02d}" if match2.isdigit() else match2,
                     "raw_match": match.group(),
                 }
             
@@ -117,7 +119,8 @@ class AniSort(object):
                 ani_name=self.ani_name,
                 raw_match=parse_info["raw_match"].strip(" []") if parse_info["type"] == "Label" else  parse_info["raw_match"],
                 season=parse_info["season"],
-                number=parse_info["number"]
+                match1=parse_info["match1"],
+                match2=parse_info["match2"]
             ) + suffix
 
         return f"./{self.ani_name}/Unknown_Files/{path.name}"

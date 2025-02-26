@@ -3,68 +3,76 @@
 TMDB_API_KEY: str = "your_api_key_here"
 
 # 是否手动选择 TMDB 的搜索结果
-TMDB_SELECTED: bool = False
+TMDB_SELECTED: bool = True
 
 # 是否生成对照表
 GENERATE_COMPARISON_TABLE: bool = True
 
 # 是否生成 .ignore 文件
-GENERATE_IGNORE_FILE: bool = True
+GENERATE_IGNORE_FILE: bool = False
 
 # 分类规则 
 PATTERN: list = [
     # 特典
     {
         "type": "IV",
-        "regex": r"(?i)(IV|Interview)[ _-]?(\d*)",
-        "normalize": "Interviews/{ani_name} - IV{number:02d}",
+        "regex": r"(?i)(IV|Interview)[ _-]?(\d*(?:v\d+))",
+        "normalize": "Interviews/{ani_name} - IV{match2}",
         "priority": 4
     },
     {
         "type": "SP",
-        "regex": r"(?i)(SP|OVA|EXTRAS|Special|特別編|特别篇|S00E)[ _-]?(\d*)",
-        "normalize": "Other/{ani_name} - SP{number:02d}",
+        "regex": r"(?i)(SP|OVA|EXTRAS|Special|特別編|特别篇|S00E)[ _-]?(\d*(?:v\d+))",
+        "normalize": "Other/{ani_name} - SP{match2}",
         "priority": 1
     },
 
     # 正片集数
     {
         "type": "SE_EP",
-        "regex": r"(?i)(?:S|Season)[ _-]?(\d+)[ _-]?(?:E|Episode)[ _-]?(\d+)",
-        "normalize": "Season {season:02d}/{ani_name} - S{season:02d}E{number:02d}",
+        "regex": r"(?i)(?:S|Season)[ _-]?(\d+)[ _-]?(?:E|Episode)[ _-]?(\d+(?:v\d+))",
+        "normalize": "Season {season}/{ani_name} - S{season}E{match2}",
         "priority": 2
     },
     {
         "type": "EP",
-        "regex": r"(?i)(?:EP|E|Episode|第)[ _-]?(\d+)",
-        "normalize": "Season {season:02d}/{ani_name} - S{season:02d}E{number:02d}",
+        "regex": r"(?i)(?:EP|E|Episode|第)[ _-]?(\d+(?:v\d+))",
+        "normalize": "Season {season}/{ani_name} - S{season}E{match2}",
         "priority": 5
     },
     {
         "type": "EP",
-        "regex": r"(?i)\b(\d{2,3})(?:v\d+)?\.(?:mkv|mp4|mka|ass)",
-        "normalize": "Season {season:02d}/{ani_name} - S{season:02d}E{number:02d}",
+        "regex": r"(?i)\b(\d{2,3}(?:v\d+))?\.(?:mkv|mp4|mka|ass)",
+        "normalize": "Season {season}/{ani_name} - S{season}E{match2}",
         "priority": 3
     },
     {
         "type": "EP",
-        "regex": r"(?i)\[(\d{2,3})\].*\.(?:mkv|mp4|mka|ass)",
-        "normalize": "Season {season:02d}/{ani_name} - S{season:02d}E{number:02d}",
+        "regex": r"(?i)\[(\d{2,3}(?:v\d+))\].*\.(?:mkv|mp4|mka|ass)",
+        "normalize": "Season {season}/{ani_name} - S{season}E{match2}",
+        "priority": 3
+    },
+
+    # 菜单
+    {
+        "type": "Menu",
+        "regex": r"(?i)(Menu)[ _-]?(\d+_\d+|\d+)",
+        "normalize": "Other/{ani_name} - Menu{match2}",
         "priority": 3
     },
 
     # CD/BD/DVD（实体介质）
     {
         "type": "CD",
-        "regex": r"(?i)(CD|BD|DVD|DISC|Disk|Vol)[ _-]?(\d*)",
-        "normalize": "Other/{ani_name} - CD{number:02d}",
+        "regex": r"(?i)(CD|BD|DVD|DISC|Disk|Vol)[ _-]?(\d*(?:v\d+))",
+        "normalize": "Other/{ani_name} - CD{match2}",
         "priority": 4
     },
 
     # OP/ED
     {
         "type": "OP/ED",
-        "regex": r"(?i)(OP|ED|NCED\d*_EP\d+|NCOP|NCED)[ _-]?(\d*)",
+        "regex": r"(?i)(OP|ED|NCED\d*_EP\d+|NCOP|NCED)[ _-]?(\d*(?:v\d+))",
         "normalize": "Other/{ani_name} - {raw_match}",
         "priority": 4
     },
@@ -72,7 +80,7 @@ PATTERN: list = [
     # NC
     {
         "type": "NC",
-        "regex": r"(?i)(NC.*EP)(\d*)",
+        "regex": r"(?i)(NC.*EP)(\d*(?:v\d+))",
         "normalize": "Other/{ani_name} - {raw_match}",
         "priority": 4
     },
@@ -80,15 +88,15 @@ PATTERN: list = [
     # 预告类
     {
         "type": "Preview",
-        "regex": r"(?i)(Preview|Prev)[ _-]?(\d*)",
-        "normalize": "Trailers/{ani_name} - Preview{number:02d}",
+        "regex": r"(?i)(Preview|Prev)[ _-]?(\d*(?:v\d+))",
+        "normalize": "Trailers/{ani_name} - Preview{match2}",
         "priority": 4
     },
 
     # 宣传片
     {
         "type": "PV",
-        "regex": r"(?i)(PV|Trailer|Teaser)[ _-]?(\d*)",
+        "regex": r"(?i)(PV|Trailer|Teaser)[ _-]?(\d*(?:v\d+))",
         "normalize": "Trailers/{ani_name} - {raw_match}",
         "priority": 4
     },
@@ -96,46 +104,38 @@ PATTERN: list = [
     # 广告
     {
         "type": "CM",
-        "regex": r"(?i)(CM|SPOT)[ _-]?(\d*)",
+        "regex": r"(?i)(CM|SPOT)[ _-]?(\d*(?:v\d+))",
         "normalize": "Trailers/{ani_name} - CM{raw_match}",
-        "priority": 4
-    },
-
-    # 菜单
-    {
-        "type": "Menu",
-        "regex": r"(?i)(Menu)[ _-]?(\d+_\d+|\d+)",
-        "normalize": "Other/{ani_name} - Menu{number:02d}",
         "priority": 4
     },
 
     # 音乐视频
     {
         "type": "MV",
-        "regex": r"(?i)\b(MV)[ _-]?(\d*)",
-        "normalize": "Other/{ani_name} - MV{number:02d}",
+        "regex": r"(?i)\b(MV)[ _-]?(\d*(?:v\d+))",
+        "normalize": "Other/{ani_name} - MV{match2}",
         "priority": 4
     },
 
     # Collection
     {
         "type": "Collection",
-        "regex": r"(?i)(CM Collection)[ _-]?(\d*)",
-        "normalize": "Other/{ani_name} - Collection{number:02d}",
+        "regex": r"(?i)(CM Collection)[ _-]?(\d*(?:v\d+))",
+        "normalize": "Other/{ani_name} - Collection{match2}",
         "priority": 4
     },
     {
         "type": "Collection",
-        "regex": r"(?i)(PV Collection)[ _-]?(\d*)",
-        "normalize": "Trailers/{ani_name} - Collection{number:02d}",
+        "regex": r"(?i)(PV Collection)[ _-]?(\d*(?:v\d+))",
+        "normalize": "Trailers/{ani_name} - Collection{match2}",
         "priority": 4
     },
 
     # 保留标签
     {
-        "type": "None",
-        "regex": r"(?i)\s(\[.+?(\d*)\])",
-        "normalize": "Other/{ani_name} -{raw_match}",
+        "type": "Label",
+        "regex": r"(?i)\s(\[.+?(\d*(?:v\d+))\])",
+        "normalize": "Other/{ani_name} - {raw_match}",
         "priority": 114514
     }
 ]
