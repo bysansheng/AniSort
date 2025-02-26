@@ -100,7 +100,7 @@ class AniSort(object):
                     **p,
                     "season": f"{season:02d}",
                     "match1": match1,
-                    "match2": f"{int(match2):02d}" if match2.isdigit() else match2,
+                    "match2": f"{int(match2):02d}" if match2.isdigit() else match2.split('v')[0],
                     "raw_match": match.group(),
                 }
             
@@ -108,7 +108,7 @@ class AniSort(object):
 
     def normalize(self, path: Path) -> str:
         """获取文件规范化命名
-        path: 文件路径
+        path: 文件路径)
         """
         if (parse_info :=  self.parse(path.name)) and parse_info["normalize"]:
             # 处理字幕文件
