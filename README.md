@@ -12,7 +12,7 @@ python ani_sort.py
 请输入文件夹路径: D:\anime\xxx
 
 python ani_sort.py
-请输入文件夹路径: ./anime\xxx
+请输入文件夹路径: ./anime/xxx
 ```
 
 * 可在 **ani_sort.py** 的同级目录下进行调用
@@ -29,11 +29,11 @@ AniSort("./xxx").move_files()
 
 然后采用 PLEX 推荐的分类标准进行分类：
 
-| 文件夹  | 包含内容类型                          |
+| 文件夹     | 包含内容类型                      |
 |------------|------------------------------------|
-| Interviews | IV（访谈）                          |
+| Interviews | IV（访谈）                         |
 | Trailers   | PV / CM / SPOT / Teaser / Trailer  |
-| Other      | Menu / NCOP / NCED等               |
+| Other      | Menu / NCOP / NCED 等              |
 
 最后会将所有文件移动到 **新文件夹** 内
 
@@ -74,7 +74,7 @@ title (2018)/
 ├── Trailers/
 │   ├── title (2018) - CM.mkv
 │   └── title (2018) - PV.mkv
-├── Season 01
+├── Season 01/
 │   └── title (2018) - S01E01.mkv
 └── └── title (2018) - S01E02.mkv
 └── Comparison_Table.txt
