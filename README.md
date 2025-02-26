@@ -89,11 +89,14 @@ title (2018)/
 # https://www.themoviedb.org/settings/api
 TMDB_API_KEY = "your_api_key_here"
 
+# 是否手动选择 TMDB 的搜索结果
+TMDB_SELECTED: bool = True
+
 # 是否生成对照表
 GENERATE_COMPARISON_TABLE: bool = True
 
 # 是否生成 .ignore 文件
-GENERATE_IGNORE_FILE: bool = True
+GENERATE_IGNORE_FILE: bool = False
 
 # 分类规则（可自行编写和添加）
 PATTERN = [
