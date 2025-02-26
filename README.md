@@ -102,8 +102,8 @@ GENERATE_IGNORE_FILE: bool = False
 PATTERN = [
     {
         "type": "IV",
-        "regex": r"(?i)(IV|Interview|Program|Stage|Talk|Event)(\d*)",
-        "normalize": "Interviews/{ani_name} - IV{number:02d}.{file_type}",
+        "regex": r"(?i)(IV|Interview)[ _-]?(\d*(?:v\d+))",
+        "normalize": "Interviews/{ani_name} - IV{match2}",
         "priority": 4
     },
     ...
