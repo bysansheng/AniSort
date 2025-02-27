@@ -15,8 +15,8 @@ from config import (
 )
 
 SUFFIX_MAP = {
-    "chs": ".zh-CN.forced", "sc": ".zh-CN.forced", "JPSC": ".zh-CN.forced",
-    "cht": ".zh-TW", "tc": ".zh-TW", "JPTC": ".zh-TW"
+    "chs": ".zh-CN.forced", "sc": ".zh-CN.forced", "jpsc": ".zh-CN.forced",
+    "cht": ".zh-TW", "tc": ".zh-TW", "jptc": ".zh-TW"
 }
 
 
@@ -31,7 +31,7 @@ class AniSort(object):
             "normalize": p["normalize"]
         } for p in PATTERN]
         
-        self.ani_info: dict = self.get_ani_info(self.path.name)
+        self.ani_info: dict = self.get_ani_info(self.path.stem)
         self.ani_name: str = f'{self.ani_info["name"]} ({self.ani_info["date"]})'
         self.table: dict = {
             str(file): self.normalize(file)
@@ -46,7 +46,7 @@ class AniSort(object):
             [f for f in path.rglob("*") if f.is_file()],
             key=lambda x: difflib.SequenceMatcher(None, str(x), str(path)).ratio(),
             reverse=True
-        )
+        ) if path.is_dir() else [path]
     
     def get_ani_info(self, name: str) -> dict:
         """获取番剧的信息
@@ -103,7 +103,7 @@ class AniSort(object):
                     "match2": f"{int(match2):02d}" if match2.isdigit() else match2.split('v')[0],
                     "raw_match": match.group(),
                 }
-            
+
         return None
 
     def normalize(self, path: Path) -> str:
@@ -113,7 +113,7 @@ class AniSort(object):
         if (parse_info :=  self.parse(path.name)) and parse_info["normalize"]:
             # 处理字幕文件
             if (suffix := path.suffix) == ".ass":
-                suffix = SUFFIX_MAP.get(path.stem.split('.')[-1], '') + suffix
+                suffix = SUFFIX_MAP.get(path.stem.split('.')[-1].lower(), '') + suffix
 
             return f"./{self.ani_name}/" + parse_info["normalize"].format(
                 ani_name=self.ani_name,
@@ -136,13 +136,14 @@ class AniSort(object):
             if not(os.path.isfile(dest)):
                 shutil.move(src, dest)
             else:
-                self.table[src] = "Unknown_Files/" + src.split('\\')[-1]
+                self.table[src] = "Unknown_Files/" + Path(src).stem
 
         # 删除原文件夹
-        if self.get_all_files(self.path):
-            shutil.move(self.path, f"./{self.ani_name}/Unknown_Files")
-        else:
-            shutil.rmtree(self.path)
+        if self.path.exists():
+            if self.get_all_files(self.path):
+                shutil.move(self.path, f"./{self.ani_name}/Unknown_Files")
+            else:
+                shutil.rmtree(self.path)
         
         # 生成 .ignore 文件
         if GENERATE_IGNORE_FILE:
@@ -153,8 +154,8 @@ class AniSort(object):
 
         # 写入对照表
         if GENERATE_COMPARISON_TABLE:
-            with open(f"./{self.ani_name}/Comparison_Table.txt", "w", encoding="utf-8") as file:
-                file.write("\n\n".join(
+            with open(f"./{self.ani_name}/Comparison_Table.txt", "a", encoding="utf-8") as file:
+                file.write("\n" + "\n\n".join(
                     "{}\n└── {}".format('/'.join(Path(v).parts[-2:]), Path(k).name)
                     for k, v in self.table.items()
                 ))

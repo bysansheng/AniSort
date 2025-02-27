@@ -3,7 +3,7 @@
 TMDB_API_KEY: str = "your_api_key_here"
 
 # 是否手动选择 TMDB 的搜索结果
-TMDB_SELECTED: bool = True
+TMDB_SELECTED: bool = False
 
 # 是否生成对照表
 GENERATE_COMPARISON_TABLE: bool = True
@@ -16,13 +16,13 @@ PATTERN: list = [
     # 特典
     {
         "type": "IV",
-        "regex": r"(?i)(IV|Interview)[ _-]?(\d*(?:v\d+))",
+        "regex": r"(?i)(IV|Interview)[ _-]?(\d*(?:v\d+){0,1})",
         "normalize": "Interviews/{ani_name} - IV{match2}",
         "priority": 4
     },
     {
         "type": "SP",
-        "regex": r"(?i)(SP|OVA|EXTRAS|Special|特別編|特别篇|S00E)[ _-]?(\d*(?:v\d+))",
+        "regex": r"(?i)(SP|OVA|EXTRAS|Special|特別編|特别篇|S00E)[ _-]?(\d*(?:v\d+){0,1})",
         "normalize": "Other/{ani_name} - SP{match2}",
         "priority": 1
     },
@@ -30,13 +30,13 @@ PATTERN: list = [
     # 正片集数
     {
         "type": "SE_EP",
-        "regex": r"(?i)(?:S|Season)[ _-]?(\d+)[ _-]?(?:E|Episode)[ _-]?(\d+(?:v\d+))",
+        "regex": r"(?i)(?:S|Season)[ _-]?(\d+)[ _-]?(?:E|Episode)[ _-]?(\d+(?:v\d+){0,1})",
         "normalize": "Season {season}/{ani_name} - S{season}E{match2}",
         "priority": 2
     },
     {
         "type": "EP",
-        "regex": r"(?i)(?:EP|E|Episode|第)[ _-]?(\d+(?:v\d+))",
+        "regex": r"(?i)(?:EP|E|Episode|第)[ _-]?(\d+(?:v\d+){0,1})",
         "normalize": "Season {season}/{ani_name} - S{season}E{match2}",
         "priority": 5
     },
@@ -60,11 +60,11 @@ PATTERN: list = [
         "normalize": "Other/{ani_name} - Menu{match2}",
         "priority": 3
     },
-
+    
     # CD/BD/DVD（实体介质）
     {
         "type": "CD",
-        "regex": r"(?i)(CD|BD|DVD|DISC|Disk|Vol)[ _-]?(\d*(?:v\d+))",
+        "regex": r"(?i)(CD|BD|DVD|DISC|Disk|Vol)[ _-]?(\d*(?:v\d+){0,1})",
         "normalize": "Other/{ani_name} - CD{match2}",
         "priority": 4
     },
@@ -72,7 +72,7 @@ PATTERN: list = [
     # OP/ED
     {
         "type": "OP/ED",
-        "regex": r"(?i)(OP|ED|NCED\d*_EP\d+|NCOP|NCED)[ _-]?(\d*(?:v\d+))",
+        "regex": r"(?i)(OP|ED|NCED\d*_EP\d+|NCOP|NCED)[ _-]?(\d*(?:v\d+){0,1})",
         "normalize": "Other/{ani_name} - {raw_match}",
         "priority": 4
     },
@@ -80,7 +80,7 @@ PATTERN: list = [
     # NC
     {
         "type": "NC",
-        "regex": r"(?i)(NC.*EP)(\d*(?:v\d+))",
+        "regex": r"(?i)(NC.*EP)(\d*(?:v\d+){0,1})",
         "normalize": "Other/{ani_name} - {raw_match}",
         "priority": 4
     },
@@ -88,7 +88,7 @@ PATTERN: list = [
     # 预告类
     {
         "type": "Preview",
-        "regex": r"(?i)(Preview|Prev)[ _-]?(\d*(?:v\d+))",
+        "regex": r"(?i)(Preview|Prev)[ _-]?(\d*(?:v\d+){0,1})",
         "normalize": "Trailers/{ani_name} - Preview{match2}",
         "priority": 4
     },
@@ -96,7 +96,7 @@ PATTERN: list = [
     # 宣传片
     {
         "type": "PV",
-        "regex": r"(?i)(PV|Trailer|Teaser)[ _-]?(\d*(?:v\d+))",
+        "regex": r"(?i)(PV|Trailer|Teaser)[ _-]?(\d*(?:v\d+){0,1})",
         "normalize": "Trailers/{ani_name} - {raw_match}",
         "priority": 4
     },
@@ -104,7 +104,7 @@ PATTERN: list = [
     # 广告
     {
         "type": "CM",
-        "regex": r"(?i)(CM|SPOT)[ _-]?(\d*(?:v\d+))",
+        "regex": r"(?i)(CM|SPOT)[ _-]?(\d*(?:v\d+){0,1})",
         "normalize": "Trailers/{ani_name} - CM{raw_match}",
         "priority": 4
     },
@@ -112,7 +112,7 @@ PATTERN: list = [
     # 音乐视频
     {
         "type": "MV",
-        "regex": r"(?i)\b(MV)[ _-]?(\d*(?:v\d+))",
+        "regex": r"(?i)\b(MV)[ _-]?(\d*(?:v\d+){0,1})",
         "normalize": "Other/{ani_name} - MV{match2}",
         "priority": 4
     },
@@ -120,13 +120,13 @@ PATTERN: list = [
     # Collection
     {
         "type": "Collection",
-        "regex": r"(?i)(CM Collection)[ _-]?(\d*(?:v\d+))",
+        "regex": r"(?i)(CM Collection)[ _-]?(\d*(?:v\d+){0,1})",
         "normalize": "Other/{ani_name} - Collection{match2}",
         "priority": 4
     },
     {
         "type": "Collection",
-        "regex": r"(?i)(PV Collection)[ _-]?(\d*(?:v\d+))",
+        "regex": r"(?i)(PV Collection)[ _-]?(\d*(?:v\d+){0,1})",
         "normalize": "Trailers/{ani_name} - Collection{match2}",
         "priority": 4
     },
@@ -134,7 +134,7 @@ PATTERN: list = [
     # 保留标签
     {
         "type": "Label",
-        "regex": r"(?i)\s(\[.+?(\d*(?:v\d+))\])",
+        "regex": r"(?i)\s(\[.+?(\d*(?:v\d+){0,1})\])",
         "normalize": "Other/{ani_name} - {raw_match}",
         "priority": 114514
     }
