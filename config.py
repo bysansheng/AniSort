@@ -42,13 +42,13 @@ PATTERN: list = [
     },
     {
         "type": "EP",
-        "regex": r"(?i)\b(\d{2,3}(?:v\d+))?\.(?:mkv|mp4|mka|ass)",
+        "regex": r"(?i)\s(\d{2,3}(?:v\d+){0,1})\s.*\.(?:mkv|mp4|mka|ass)",
         "normalize": "Season {season}/{ani_name} - S{season}E{match2}",
         "priority": 3
     },
     {
         "type": "EP",
-        "regex": r"(?i)\[(\d{2,3}(?:v\d+))\].*\.(?:mkv|mp4|mka|ass)",
+        "regex": r"(?i)\[(\d{2,3}(?:v\d+){0,1})\].*\.(?:mkv|mp4|mka|ass)",
         "normalize": "Season {season}/{ani_name} - S{season}E{match2}",
         "priority": 3
     },
