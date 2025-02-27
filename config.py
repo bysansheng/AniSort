@@ -22,8 +22,8 @@ PATTERN: list = [
     },
     {
         "type": "SP",
-        "regex": r"(?i)(SP|OVA|EXTRAS|Special|特別編|特别篇|S00E)[ _-]?(\d*(?:v\d+){0,1})",
-        "normalize": "Other/{ani_name} - SP{match2}",
+        "regex": r"(?i)(SP|OVA|EXTRAS|Special|特別編|特别篇)[ _-]?(\d*(?:v\d+){0,1})",
+        "normalize": "Other/SP{match2}",
         "priority": 1
     },
 
@@ -52,12 +52,18 @@ PATTERN: list = [
         "normalize": "Season {season}/{ani_name} - S{season}E{match2}",
         "priority": 3
     },
+    {
+        "type": "SP",
+        "regex": r"(?i)S00E[ _-]?(\d+(?:v\d+){0,1})",
+        "normalize": "Season 00/{ani_name} - S00E{match2}",
+        "priority": 1
+    },
 
     # 菜单
     {
         "type": "Menu",
         "regex": r"(?i)(Menu)[ _-]?(\d+_\d+|\d+)",
-        "normalize": "Other/{ani_name} - Menu{match2}",
+        "normalize": "Other/Menu{match2}",
         "priority": 3
     },
     
@@ -65,7 +71,7 @@ PATTERN: list = [
     {
         "type": "CD",
         "regex": r"(?i)(CD|BD|DVD|DISC|Disk|Vol)[ _-]?(\d*(?:v\d+){0,1})",
-        "normalize": "Other/{ani_name} - CD{match2}",
+        "normalize": "Other/CD{match2}",
         "priority": 4
     },
 
@@ -73,7 +79,7 @@ PATTERN: list = [
     {
         "type": "OP/ED",
         "regex": r"(?i)(OP|ED|NCED\d*_EP\d+|NCOP|NCED)[ _-]?(\d*(?:v\d+){0,1})",
-        "normalize": "Other/{ani_name} - {raw_match}",
+        "normalize": "Other/{raw_match}",
         "priority": 4
     },
 
@@ -81,7 +87,7 @@ PATTERN: list = [
     {
         "type": "NC",
         "regex": r"(?i)(NC.*EP)(\d*(?:v\d+){0,1})",
-        "normalize": "Other/{ani_name} - {raw_match}",
+        "normalize": "Other/{raw_match}",
         "priority": 4
     },
 
@@ -113,7 +119,7 @@ PATTERN: list = [
     {
         "type": "MV",
         "regex": r"(?i)\b(MV)[ _-]?(\d*(?:v\d+){0,1})",
-        "normalize": "Other/{ani_name} - MV{match2}",
+        "normalize": "Other/MV{match2}",
         "priority": 4
     },
 
@@ -121,7 +127,7 @@ PATTERN: list = [
     {
         "type": "Collection",
         "regex": r"(?i)(CM Collection)[ _-]?(\d*(?:v\d+){0,1})",
-        "normalize": "Other/{ani_name} - Collection{match2}",
+        "normalize": "Other/Collection{match2}",
         "priority": 4
     },
     {
@@ -135,7 +141,7 @@ PATTERN: list = [
     {
         "type": "Label",
         "regex": r"(?i)\s(\[.+?(\d*(?:v\d+){0,1})\])",
-        "normalize": "Other/{ani_name} - {raw_match}",
+        "normalize": "Other/{raw_match}",
         "priority": 114514
     }
 ]
