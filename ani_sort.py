@@ -27,9 +27,8 @@ class AniSort(object):
             self.path: Path = Path(path.strip('"\''))
 
         self.patterns: dict = [{
-            "type": p["type"],
+            **p,
             "regex": re.compile(p["regex"]),
-            "normalize": p["normalize"]
         } for p in PATTERN]
         
         self.ani_info: dict = self.get_ani_info(self.path.stem)
