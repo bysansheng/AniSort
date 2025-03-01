@@ -24,7 +24,7 @@ class AniSort(object):
 
     def __init__(self, path: Union[str, Path]) -> None:
         if isinstance(str, path):
-            self.path: Path = Path(path.strip('"'))
+            self.path: Path = Path(path.strip('"\''))
 
         self.patterns: dict = [{
             "type": p["type"],
