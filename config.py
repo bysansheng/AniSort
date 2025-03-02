@@ -16,7 +16,7 @@ PATTERN: list = [
     # ova
     {
         "type": "ova",
-        "regex": r"(?i)\bova(\d*)\b",
+        "regex": r"(?i)\b(ova)(\d*)\b",
         "normalize": None,
         "priority": 1
     },

@@ -23,7 +23,7 @@ SUFFIX_MAP = {
 class AniSort(object):
 
     def __init__(self, path: Union[str, Path]) -> None:
-        if isinstance(str, path):
+        if isinstance(path, str):
             self.path: Path = Path(path.strip('"\''))
 
         self.patterns: dict = [{
