@@ -13,6 +13,14 @@ GENERATE_IGNORE_FILE: bool = False
 
 # 分类规则 
 PATTERN: list = [
+    # ova
+    {
+        "type": "ova",
+        "regex": r"(?i)[\(|\s|（]+ova[\)|\s|）]+",
+        "normalize": None,
+        "priority": 1
+    },
+
     # 正片集数
     {
         "type": "SP",
