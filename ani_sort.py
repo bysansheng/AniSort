@@ -52,9 +52,12 @@ class AniSort(object):
         """获取番剧的信息
         name: 要查询的番剧的名称
         """
+        match = re.match(r"(.+?)\s*(\d*)?$", re.sub(r"\s*(\[|\().*?(\]|\))\s*", '', name))
+        self.season: int = int(match[2]) if match[2] else 1
+        
         try:
             res = requests.get("https://api.themoviedb.org/3/search/tv", params={
-                "query": re.sub(r"\s*(\[|\().*?(\]|\))\s*", '', name),
+                "query": match[1],
                 "language": "zh-CN",
                 "api_key": TMDB_API_KEY
             }, headers={"accept": "application/json"}, timeout=None)
@@ -87,7 +90,7 @@ class AniSort(object):
         """
         for p in self.patterns:
             if match := p["regex"].search(name):
-                season: int = 1
+                season: int = self.season
                 match1 = match[1]
 
                 if p["type"] == "SE_EP":
