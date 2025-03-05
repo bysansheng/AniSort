@@ -101,9 +101,9 @@ class AniSort(object):
 
                 return {
                     **p,
-                    "season": f"{season:02d}",
+                    "season": season,
                     "match1": match1,
-                    "match2": f"{int(match2):02d}" if match2.isdigit() else match2.split('v')[0],
+                    "match2": int(match2) if match2.isdigit() else match2.split('v')[0],
                     "raw_match": match.group(),
                 }
 
