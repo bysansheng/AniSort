@@ -71,11 +71,11 @@ Season 01/title (2018) - S01E02.mkv
 ```bash
 title (2018)/
 ├── Other/
-│   ├── title (2018) - CD1.mkv
-│   └── title (2018) - CD2.mkv
+│   ├── title (2018) - S1_CD1.mkv
+│   └── title (2018) - S1_CD2.mkv
 ├── Trailers/
-│   ├── title (2018) - CM.mkv
-│   └── title (2018) - PV.mkv
+│   ├── title (2018) - S1_广告.mkv
+│   └── title (2018) - S1_宣传片.mkv
 ├── Season 01/
 │   └── title (2018) - S01E01.mkv
 └── └── title (2018) - S01E02.mkv
