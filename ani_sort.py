@@ -52,7 +52,7 @@ class AniSort(object):
         """获取番剧的信息
         name: 要查询的番剧的名称
         """
-        match = re.match(r"(.+?)\s*(\d*)?$", re.sub(r"\s*(\[|\().*?(\]|\))\s*", '', name))
+        match = re.match(r"(?i)(.+?)(?:_s(\d+)){0,1}$", re.sub(r"\s*(\[|\().*?(\]|\))\s*", '', name))
         self.season: int = int(match[2]) if match[2] else 1
         
         try:
@@ -101,9 +101,9 @@ class AniSort(object):
 
                 return {
                     **p,
-                    "season": season,
+                    "season": f"{season:02d}",
                     "match1": match1,
-                    "match2": int(match2) if match2.isdigit() else match2.split('v')[0],
+                    "match2": f"{int(match2):02d}" if match2.isdigit() else match2.split('v')[0],
                     "raw_match": match.group(),
                 }
 
