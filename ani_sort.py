@@ -90,18 +90,16 @@ class AniSort(object):
         """
         for p in self.patterns:
             if match := p["regex"].search(name):
-                season: int = self.season
-                match1 = match[1]
-
                 if p["type"] == "SE_EP":
                     season, match2 = int(match[1]), match[2]
                 else:
                     match2 = match[1] if p["type"]  == "EP" else match[2] or '1'
+                    season: int = self.season
 
                 return {
                     **p,
                     "season": f"{season:02d}",
-                    "match1": match1,
+                    "match1": match[1],
                     "match2": f"{int(match2):02d}" if match2.isdigit() else match2.split('v')[0],
                     "raw_match": match.group(),
                 }
