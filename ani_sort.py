@@ -52,36 +52,41 @@ class AniSort(object):
         """获取番剧的信息
         name: 要查询的番剧的名称
         """
-        match = re.match(r"(?i)(.+?)(?:_s(\d+)){0,1}$", re.sub(r"\s*(\[|\().*?(\]|\))\s*", '', name))
-        self.season: int = int(match[2]) if match[2] else 1
+        # match = re.match(r"(?i)(.+?)(?:_s(\d+)){0,1}$", re.sub(r"\s*(\[|\().*?(\]|\))\s*", '', name))
+        # self.season: int = int(match[2]) if match[2] else 1
         
-        try:
-            res = requests.get("https://api.themoviedb.org/3/search/tv", params={
-                "query": match[1],
-                "language": "zh-CN",
-                "api_key": TMDB_API_KEY
-            }, headers={"accept": "application/json"}, timeout=None)
-            res.raise_for_status()
-        except:
-            raise ValueError("无法连接到 TMDB，请更换网络环境后再试一次")
+        # try:
+        #     res = requests.get("https://api.themoviedb.org/3/search/tv", params={
+        #         "query": match[1],
+        #         "language": "zh-CN",
+        #         "api_key": TMDB_API_KEY
+        #     }, headers={"accept": "application/json"}, timeout=None)
+        #     res.raise_for_status()
+        # except:
+        #     raise ValueError("无法连接到 TMDB，请更换网络环境后再试一次")
 
-        try:
-            info: dict = res.json()["results"][0]
-            if TMDB_SELECTED and res.json()["results"]:
-                # 处理是否手动选择 TMDB 的搜索结果
-                print("\n" + '\n'.join(
-                    f'{i}、{j["name"]} ({j["first_air_date"] if j["first_air_date"] else "None"})'
-                    for i, j in enumerate(res.json()["results"])
-                ) + "\n")
+        # try:
+        #     info: dict = res.json()["results"][0]
+        #     if TMDB_SELECTED and res.json()["results"]:
+        #         # 处理是否手动选择 TMDB 的搜索结果
+        #         print("\n" + '\n'.join(
+        #             f'{i}、{j["name"]} ({j["first_air_date"] if j["first_air_date"] else "None"})'
+        #             for i, j in enumerate(res.json()["results"])
+        #         ) + "\n")
 
-                if (_input := input("请输入你想选择的结果的序号：")).isdigit():
-                    info: dict = res.json()["results"][int(_input)]
-        except:
-            raise ValueError("无法在 TMDB 中搜索到该动漫，请更改文件夹名称后再试一次")
+        #         if (_input := input("请输入你想选择的结果的序号：")).isdigit():
+        #             info: dict = res.json()["results"][int(_input)]
+        # except:
+        #     raise ValueError("无法在 TMDB 中搜索到该动漫，请更改文件夹名称后再试一次")
         
+        # return {
+        #     "name": info["name"],
+        #     "date": (info["first_air_date"] or "年份未知").split('-')[0]
+        # }
+        self.season = 1
         return {
-            "name": info["name"],
-            "date": (info["first_air_date"] or "年份未知").split('-')[0]
+            "name": "name",
+            "date": "1145"
         }
     
     def parse(self, name: str) -> dict:
@@ -96,8 +101,7 @@ class AniSort(object):
                 if p["type"] == "SE_EP":
                     season, match2 = int(match[1]), match[2]
                 else:
-                    # 特殊处理无数字的 SP/OP 等情况（如 "SP.mkv"）
-                    match2 = match[1] if p["type"]  == "EP" else match[2] or match[1]
+                    match2 = match[1] if p["type"]  == "EP" else match[2] or '1'
 
                 return {
                     **p,
@@ -111,9 +115,10 @@ class AniSort(object):
 
     def normalize(self, path: Path) -> str:
         """获取文件规范化命名
-        path: 文件路径)
+        path: 文件路径
         """
         if (parse_info :=  self.parse(path.name)) and parse_info["normalize"]:
+            print(parse_info)
             # 处理字幕文件
             if (suffix := path.suffix) == ".ass":
                 suffix = SUFFIX_MAP.get(path.stem.split('.')[-1].lower(), '') + suffix
