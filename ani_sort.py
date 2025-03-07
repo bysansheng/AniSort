@@ -11,7 +11,8 @@ from config import (
     PATTERN,
     TMDB_SELECTED,
     GENERATE_COMPARISON_TABLE,
-    GENERATE_IGNORE_FILE
+    GENERATE_IGNORE_FILE,
+    NORMALIZE_SUFFIX
 )
 
 SUFFIX_MAP = {
@@ -91,16 +92,20 @@ class AniSort(object):
         for p in self.patterns:
             if match := p["regex"].search(name):
                 if p["type"] == "SE_EP":
-                    season, match2 = int(match[1]), match[2]
+                    season, match_2 = int(match[1]), match[2]
                 else:
-                    match2 = match[1] if p["type"]  == "EP" else match[2] or '1'
+                    match_2 = match[1] if p["type"]  == "EP" else match[2] or '1'
                     season: int = self.season
+                
+                # 处理第0集的情况
+                if (match2 := re.match(r"(\d+)(?:[v|_]\d+){0,1}", match_2)) and int(match2[1]) == 0:
+                    return None
 
                 return {
                     **p,
                     "season": f"{season:02d}",
-                    "match1": match[1],
-                    "match2": f"{int(match2):02d}" if match2.isdigit() else match2.split('v')[0],
+                    "match_1": match[1],
+                    "match_2": f"{int(match_2):02d}" if match_2.isdigit() else match_2.split('v')[0],
                     "raw_match": match.group(),
                 }
 
@@ -111,17 +116,16 @@ class AniSort(object):
         path: 文件路径
         """
         if (parse_info :=  self.parse(path.name)) and parse_info["normalize"]:
-            print(parse_info)
             # 处理字幕文件
             if (suffix := path.suffix) == ".ass":
-                suffix = SUFFIX_MAP.get(path.stem.split('.')[-1].lower(), '') + suffix
+                suffix = (NORMALIZE_SUFFIX if NORMALIZE_SUFFIX else SUFFIX_MAP.get(path.stem.split('.')[-1].lower(), '')) + suffix
 
             return f"./{self.ani_name}/" + parse_info["normalize"].format(
                 ani_name=self.ani_name,
                 raw_match=parse_info["raw_match"].strip(" []") if parse_info["type"] == "Label" else  parse_info["raw_match"],
                 season=parse_info["season"],
-                match1=parse_info["match1"],
-                match2=parse_info["match2"]
+                match_1=parse_info["match_1"],
+                match_2=parse_info["match_2"]
             ) + suffix
 
         return f"./{self.ani_name}/Unknown_Files/{path.name}"

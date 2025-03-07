@@ -11,6 +11,10 @@ GENERATE_COMPARISON_TABLE: bool = True
 # 是否生成 .ignore 文件
 GENERATE_IGNORE_FILE: bool = False
 
+# 统一字幕文件后缀（当值为 None 时忽略此项）
+# 例如：NORMALIZE_SUFFIX: str = ".zh-CN.forced"
+NORMALIZE_SUFFIX: str = None
+
 # 分类规则 
 PATTERN: list = [
     # ova
