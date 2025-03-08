@@ -29,6 +29,7 @@ class AniSort(object):
         if isinstance(path, str):
             self.path: Path = Path(path.strip('"\''))
 
+        self.is_movie: bool = CATEGORY_SELECTION == "movie"
         self.patterns: dict = [{
             **p,
             "regex": re.compile(p["regex"]),
@@ -83,8 +84,8 @@ class AniSort(object):
             raise ValueError("无法在 TMDB 中搜索到该动漫，请更改文件夹名称后再试一次")
         
         return {
-            "name": info[("name", "title")[CATEGORY_SELECTION == "movie"]],
-            "date": info[("first_air_date", "release_date")[CATEGORY_SELECTION == "movie"]].split('-')[0] or "年份未知"
+            "name": info[("name", "title")[self.is_movie]],
+            "date": info[("first_air_date", "release_date")[self.is_movie]].split('-')[0] or "年份未知"
         }
     
     def parse(self, name: str) -> dict:
@@ -92,7 +93,7 @@ class AniSort(object):
         name: 番剧文件名
         """
         for p in self.patterns:
-            if (CATEGORY_SELECTION == "movie" and p["type"] in ["SE_EP", "EP", "Label"]) or not(match := p["regex"].search(name)):
+            if (self.is_movie and p["type"] in ["SE_EP", "EP", "Label"]) or not(match := p["regex"].search(name)):
                 continue
 
             if p["type"] == "SE_EP":
@@ -124,7 +125,7 @@ class AniSort(object):
             if (suffix := path.suffix) == ".ass":
                 suffix = (NORMALIZE_SUFFIX if NORMALIZE_SUFFIX else SUFFIX_MAP.get(path.stem.split('.')[-1].lower(), '')) + suffix
 
-            return f"./{self.ani_name}/" + parse_info["normalize"].format(
+            return f"./{self.ani_name}/" + parse_info["normalize"].replace("S{season}_" if self.is_movie else '', '').format(
                 ani_name=self.ani_name,
                 raw_match=parse_info["raw_match"].strip(" []") if parse_info["type"] == "Label" else  parse_info["raw_match"],
                 season=parse_info["season"],
@@ -132,7 +133,7 @@ class AniSort(object):
                 match_2=parse_info["match_2"]
             ) + suffix
         
-        if CATEGORY_SELECTION == "movie":
+        if self.is_movie:
             return f"./{self.ani_name}/{self.ani_name}{path.suffix}"
 
         return f"./{self.ani_name}/Unknown_Files/{path.name}"
