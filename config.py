@@ -119,14 +119,6 @@ PATTERN: list = [
         "priority": 6
     },
 
-    # NC
-    {
-        "type": "NC",
-        "regex": r"(?i)(NC.*EP)(\d*(?:[v|_]\d+){0,1})",
-        "normalize": "Other/S{season}_{raw_match}",
-        "priority": 5
-    },
-
     # 预告类
     {
         "type": "Preview",
