@@ -1,3 +1,4 @@
+from datetime import datetime
 from pathlib import Path
 from typing import Union
 import difflib
@@ -141,15 +142,15 @@ class AniSort(object):
             if not(os.path.isfile(dest)):
                 shutil.move(src, dest)
             else:
-                self.table[src] = "Unknown_Files/" + Path(src).stem
+                self.table[src] = "Unknown_Files/" + Path(src).name
 
         # 删除原文件夹
         if self.path.exists():
             if self.get_all_files(self.path):
-                shutil.move(self.path, f"./{self.ani_name}/Unknown_Files")
+                shutil.move(self.path, f'./{self.ani_name}/Unknown_Files/{datetime.now().strftime("%Y%m%d%H%M%S")}_{self.path.name}')
             else:
                 shutil.rmtree(self.path)
-        
+
         # 生成 .ignore 文件
         if GENERATE_IGNORE_FILE:
             for root, _, _ in os.walk(f"./{self.ani_name}"):
