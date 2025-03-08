@@ -54,7 +54,7 @@ PATTERN: list = [
         "type": "EP",
         "regex": r"(?i)(?:EP|E|Episode|第)[ _-]?(\d+(?:[v|_]\d+){0,1})",
         "normalize": "Season {season}/{ani_name} - S{season}E{match_2}",
-        "priority": 5
+        "priority": 7
     },
 
     # 菜单
@@ -96,27 +96,27 @@ PATTERN: list = [
     # OP/ED
     {
         "type": "OP",
-        "regex": r"(?i)(OP(?:\d*_EP\d+){0,1})[ _-]?(\d*(?:[v|_]\d+){0,1})",
+        "regex": r"(?i)(NCOP(?:\d*_EP\d+){0,1})[ _-]?(\d*(?:[v|_]\d+){0,1})",
         "normalize": "Other/S{season}_无字幕片头{match_2}",
         "priority": 5
     },
     {
         "type": "OP",
-        "regex": r"(?i)(NCOP(?:\d*_EP\d+){0,1})[ _-]?(\d*(?:[v|_]\d+){0,1})",
+        "regex": r"(?i)(OP(?:\d*_EP\d+){0,1})[ _-]?(\d*(?:[v|_]\d+){0,1})",
+        "normalize": "Other/S{season}_片头{match_2}",
+        "priority": 6
+    },
+    {
+        "type": "ED",
+        "regex": r"(?i)(NCED(?:\d*_EP\d+){0,1})[ _-]?(\d*(?:[v|_]\d+){0,1})",
         "normalize": "Other/S{season}_无字幕片尾{match_2}",
         "priority": 5
     },
     {
         "type": "ED",
         "regex": r"(?i)(ED(?:\d*_EP\d+){0,1})[ _-]?(\d*(?:[v|_]\d+){0,1})",
-        "normalize": "Other/S{season}_片头{match_2}",
-        "priority": 5
-    },
-    {
-        "type": "ED",
-        "regex": r"(?i)(NCED(?:\d*_EP\d+){0,1})[ _-]?(\d*(?:[v|_]\d+){0,1})",
         "normalize": "Other/S{season}_片尾{match_2}",
-        "priority": 5
+        "priority": 6
     },
 
     # NC
