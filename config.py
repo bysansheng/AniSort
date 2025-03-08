@@ -9,7 +9,7 @@ TMDB_SELECTED: bool = False
 GENERATE_COMPARISON_TABLE: bool = True
 
 # 整理的文件类别选择（值为 tv 表示电视动画，为 movie 表示剧集动画）
-CATEGORY_SELECTION: str = "movie"
+CATEGORY_SELECTION: str = "tv"
 
 # 是否生成 .ignore 文件
 GENERATE_IGNORE_FILE: bool = False
