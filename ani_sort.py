@@ -13,7 +13,8 @@ from config import (
     TMDB_SELECTED,
     GENERATE_COMPARISON_TABLE,
     GENERATE_IGNORE_FILE,
-    NORMALIZE_SUFFIX
+    NORMALIZE_SUFFIX,
+    CATEGORY_SELECTION
 )
 
 SUFFIX_MAP = {
@@ -58,7 +59,7 @@ class AniSort(object):
         self.season: int = int(match[2]) if match[2] else 1
         
         try:
-            res = requests.get("https://api.themoviedb.org/3/search/tv", params={
+            res = requests.get(f"https://api.themoviedb.org/3/search/{CATEGORY_SELECTION}", params={
                 "query": match[1],
                 "language": "zh-CN",
                 "api_key": TMDB_API_KEY
@@ -82,8 +83,8 @@ class AniSort(object):
             raise ValueError("无法在 TMDB 中搜索到该动漫，请更改文件夹名称后再试一次")
         
         return {
-            "name": info["name"],
-            "date": (info["first_air_date"] or "年份未知").split('-')[0]
+            "name": info[("name", "title")[CATEGORY_SELECTION == "movie"]],
+            "date": info[("first_air_date", "release_date")[CATEGORY_SELECTION == "movie"]].split('-')[0] or "年份未知"
         }
     
     def parse(self, name: str) -> dict:
@@ -91,24 +92,26 @@ class AniSort(object):
         name: 番剧文件名
         """
         for p in self.patterns:
-            if match := p["regex"].search(name):
-                if p["type"] == "SE_EP":
-                    season, match_2 = int(match[1]), match[2]
-                else:
-                    match_2 = match[1] if p["type"]  == "EP" else match[2] or '1'
-                    season: int = self.season
-                
-                # 处理第0集的情况
-                if (match2 := re.match(r"(\d+)(?:[v|_]\d+){0,1}", match_2)) and int(match2[1]) == 0:
-                    return None
+            if (CATEGORY_SELECTION == "movie" and p["type"] in ["SE_EP", "EP", "Label"]) or not(match := p["regex"].search(name)):
+                continue
 
-                return {
-                    **p,
-                    "season": f"{season:02d}",
-                    "match_1": match[1],
-                    "match_2": f"{int(match_2):02d}" if match_2.isdigit() else match_2.split('v')[0],
-                    "raw_match": match.group(),
-                }
+            if p["type"] == "SE_EP":
+                season, match_2 = int(match[1]), match[2]
+            else:
+                match_2 = match[1] if p["type"]  == "EP" else match[2] or '1'
+                season: int = self.season
+            
+            # 处理第0集的情况
+            if (match2 := re.match(r"(\d+)(?:[v|_]\d+){0,1}", match_2)) and int(match2[1]) == 0:
+                return None
+
+            return {
+                **p,
+                "season": f"{season:02d}",
+                "match_1": match[1],
+                "match_2": f"{int(match_2):02d}" if match_2.isdigit() else match_2.split('v')[0],
+                "raw_match": match.group(),
+            }
 
         return None
 
@@ -128,6 +131,9 @@ class AniSort(object):
                 match_1=parse_info["match_1"],
                 match_2=parse_info["match_2"]
             ) + suffix
+        
+        if CATEGORY_SELECTION == "movie":
+            return f"./{self.ani_name}/{self.ani_name}{path.suffix}"
 
         return f"./{self.ani_name}/Unknown_Files/{path.name}"
     

@@ -8,6 +8,9 @@ TMDB_SELECTED: bool = False
 # 是否生成对照表
 GENERATE_COMPARISON_TABLE: bool = True
 
+# 整理的文件类别选择（值为 tv 表示电视动画，为 movie 表示剧集动画）
+CATEGORY_SELECTION: str = "movie"
+
 # 是否生成 .ignore 文件
 GENERATE_IGNORE_FILE: bool = False
 
@@ -60,13 +63,13 @@ PATTERN: list = [
     # 菜单
     {
         "type": "Menu",
-        "regex": r"(?i)(Chapter Menu)[ _-]?(\d+_\d+|\d+)",
+        "regex": r"(?i)(Chapter Menu)[ _-]?(\d+_\d+|\d+){0,1}",
         "normalize": "Other/S{season}_角色菜单{match_2}",
         "priority": 3
     },
     {
         "type": "Menu",
-        "regex": r"(?i)(Menu)[ _-]?(\d+_\d+|\d+)",
+        "regex": r"(?i)(Menu)[ _-]?(\d+_\d+|\d+){0,1}",
         "normalize": "Other/S{season}_BD播放选择菜单{match_2}",
         "priority": 4
     },
