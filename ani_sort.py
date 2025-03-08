@@ -117,6 +117,7 @@ class AniSort(object):
         path: 文件路径
         """
         if (parse_info :=  self.parse(path.name)) and parse_info["normalize"]:
+            print(parse_info)
             # 处理字幕文件
             if (suffix := path.suffix) == ".ass":
                 suffix = (NORMALIZE_SUFFIX if NORMALIZE_SUFFIX else SUFFIX_MAP.get(path.stem.split('.')[-1].lower(), '')) + suffix
