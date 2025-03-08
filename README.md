@@ -8,16 +8,16 @@
 
 * 在命令行中使用
 ```
-python ani_sort.py
+python ani_tv_sort.py
 请输入文件夹路径: D:\anime\xxx
 
-python ani_sort.py
+python ani_tv_sort.py
 请输入文件夹路径: ./anime/xxx
 ```
 
 * 可在 **ani_sort.py** 的同级目录下进行调用
 ```python
-from ani_sort import AniSort
+from ani_tv_sort import AniSort
 AniSort("./xxx").move_files()
 ```
 
