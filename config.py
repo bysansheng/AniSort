@@ -8,22 +8,15 @@ TMDB_SELECTED: bool = False
 # 是否生成对照表
 GENERATE_COMPARISON_TABLE: bool = True
 
-# 整理的文件类别选择（值为 tv 表示电视动画，为 movie 表示剧集动画）
-CATEGORY_SELECTION: str = "tv"
-
 # 是否生成 .ignore 文件
 GENERATE_IGNORE_FILE: bool = False
-
-# 统一字幕文件后缀（当值为 None 时忽略此项）
-# 例如：NORMALIZE_SUFFIX: str = ".zh-CN.forced"
-NORMALIZE_SUFFIX: str = None
 
 # 分类规则 
 PATTERN: list = [
     # ova
     {
         "type": "ova",
-        "regex": r"(?i)\b(ova)(\d*)\b",
+        "regex": r"(?i)\b(OVA|OAD)(\d*)\b",
         "normalize": None,
         "priority": 1
     },
@@ -63,13 +56,13 @@ PATTERN: list = [
     # 菜单
     {
         "type": "Menu",
-        "regex": r"(?i)(Chapter Menu)[ _-]?(\d+_\d+|\d+){0,1}",
+        "regex": r"(?i)\b(Chapter Menu)[ _-]?(\d+_\d+|\d+){0,1}",
         "normalize": "Other/S{season}_角色菜单{match_2}",
         "priority": 3
     },
     {
         "type": "Menu",
-        "regex": r"(?i)(Menu)[ _-]?(\d+_\d+|\d+){0,1}",
+        "regex": r"(?i)\b(Menu)[ _-]?(\d+_\d+|\d+){0,1}",
         "normalize": "Other/S{season}_BD播放选择菜单{match_2}",
         "priority": 4
     },
@@ -77,13 +70,13 @@ PATTERN: list = [
     # 特典
     {
         "type": "IV",
-        "regex": r"(?i)(IV|Interview)[ _-]?(\d*(?:[v|_]\d+){0,1})",
+        "regex": r"(?i)\b(IV|Interview)[ _-]?(\d*(?:[v|_]\d+){0,1})",
         "normalize": "Interviews/S{season}_访谈{match_2}",
         "priority": 5
     },
     {
         "type": "SP",
-        "regex": r"(?i)(SP|OVA|EXTRAS|Special|特別編|特别篇)[ _-]?(\d*(?:[v|_]\d+){0,1})",
+        "regex": r"(?i)\b(SP|OVA|EXTRAS|Special|特別編|特别篇)[ _-]?(\d*(?:[v|_]\d+){0,1})",
         "normalize": "Other/S{season}_特别篇{match_2}",
         "priority": 5
     },
@@ -91,7 +84,7 @@ PATTERN: list = [
     # CD/BD/DVD（实体介质）
     {
         "type": "CD",
-        "regex": r"(?i)(CD|BD|DVD|DISC|Disk|Vol)[ _-]?(\d*(?:[v|_]\d+){0,1})",
+        "regex": r"(?i)\b(CD|BD|DVD|DISC|Disk|Vol)[ _-]?(\d*(?:[v|_]\d+){0,1})",
         "normalize": "Other/S{season}_CD{match_2}",
         "priority": 5
     },
@@ -99,25 +92,25 @@ PATTERN: list = [
     # OP/ED
     {
         "type": "OP",
-        "regex": r"(?i)(NCOP(?:\d*_EP\d+){0,1})[ _-]?(\d*(?:[v|_]\d+){0,1})",
+        "regex": r"(?i)\b(NCOP(?:\d*_EP\d+){0,1})[ _-]?(\d*(?:[v|_]\d+){0,1})",
         "normalize": "Other/S{season}_无字幕片头{match_2}",
         "priority": 5
     },
     {
         "type": "OP",
-        "regex": r"(?i)(OP(?:\d*_EP\d+){0,1})[ _-]?(\d*(?:[v|_]\d+){0,1})",
+        "regex": r"(?i)\b(OP(?:\d*_EP\d+){0,1})[ _-]?(\d*(?:[v|_]\d+){0,1})",
         "normalize": "Other/S{season}_片头{match_2}",
         "priority": 6
     },
     {
         "type": "ED",
-        "regex": r"(?i)(NCED(?:\d*_EP\d+){0,1})[ _-]?(\d*(?:[v|_]\d+){0,1})",
+        "regex": r"(?i)\b(NCED(?:\d*_EP\d+){0,1})[ _-]?(\d*(?:[v|_]\d+){0,1})",
         "normalize": "Other/S{season}_无字幕片尾{match_2}",
         "priority": 5
     },
     {
         "type": "ED",
-        "regex": r"(?i)(ED(?:\d*_EP\d+){0,1})[ _-]?(\d*(?:[v|_]\d+){0,1})",
+        "regex": r"(?i)\b(ED(?:\d*_EP\d+){0,1})[ _-]?(\d*(?:[v|_]\d+){0,1})",
         "normalize": "Other/S{season}_片尾{match_2}",
         "priority": 6
     },
@@ -125,7 +118,7 @@ PATTERN: list = [
     # 预告类
     {
         "type": "Preview",
-        "regex": r"(?i)(Preview|Prev)[ _-]?(\d*(?:[v|_]\d+){0,1})",
+        "regex": r"(?i)\b(Preview|Prev)[ _-]?(\d*(?:[v|_]\d+){0,1})",
         "normalize": "Trailers/S{season}_预告{match_2}",
         "priority": 5
     },
@@ -141,19 +134,19 @@ PATTERN: list = [
     # Collection
     {
         "type": "Collection",
-        "regex": r"(?i)(PV&CM Collection)[ _-]?(\d*(?:[v|_]\d+){0,1})",
+        "regex": r"(?i)\b(PV&CM Collection)[ _-]?(\d*(?:[v|_]\d+){0,1})",
         "normalize": "Trailers/S{season}_PV&CM合集{match_2}",
         "priority": 5
     },
     {
         "type": "Collection",
-        "regex": r"(?i)(CM Collection)[ _-]?(\d*(?:[v|_]\d+){0,1})",
+        "regex": r"(?i)\b(CM Collection)[ _-]?(\d*(?:[v|_]\d+){0,1})",
         "normalize": "Other/S{season}_CM合集{match_2}",
         "priority": 5
     },
     {
         "type": "Collection",
-        "regex": r"(?i)(PV Collection)[ _-]?(\d*(?:[v|_]\d+){0,1})",
+        "regex": r"(?i)\b(PV Collection)[ _-]?(\d*(?:[v|_]\d+){0,1})",
         "normalize": "Trailers/S{season}_PV合集{match_2}",
         "priority": 5
     },
@@ -161,7 +154,7 @@ PATTERN: list = [
     # 广告
     {
         "type": "CM",
-        "regex": r"(?i)(CM|SPOT)[ _-]?(\d*(?:[v|_]\d+){0,1})",
+        "regex": r"(?i)\b(CM|SPOT)[ _-]?(\d*(?:[v|_]\d+){0,1})",
         "normalize": "Trailers/S{season}_广告{match_2}",
         "priority": 6
     },
@@ -169,7 +162,7 @@ PATTERN: list = [
     # 宣传片
     {
         "type": "PV",
-        "regex": r"(?i)(PV|Trailer|Teaser)[ _-]?(\d*(?:[v|_]\d+){0,1})",
+        "regex": r"(?i)\b(PV|Trailer|Teaser)[ _-]?(\d*(?:[v|_]\d+){0,1})",
         "normalize": "Trailers/S{season}_宣传片{match_2}",
         "priority": 6
     },
