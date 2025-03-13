@@ -13,13 +13,16 @@ from config import (
     TMDB_SELECTED,
     GENERATE_COMPARISON_TABLE,
     GENERATE_IGNORE_FILE,
-    NORMALIZE_SUFFIX
+    CALL_AI,
+    KIMI_API_KEY
 )
 
 SUFFIX_MAP = {
     "chs": ".zh-CN.forced", "sc": ".zh-CN.forced", "jpsc": ".zh-CN.forced",
     "cht": ".zh-TW", "tc": ".zh-TW", "jptc": ".zh-TW"
 }
+
+AI_PROMPT: str = "请你以 {name}_S{season} 的格式解析这个番剧文件名，首先 name 为番剧的名称，然后 season 为番剧的季数，默认为 1，最后只返回解析内容，例如：Uma Musume Pretty Derby_S2"
 
 
 class AniSort(object):
@@ -50,18 +53,31 @@ class AniSort(object):
             reverse=True
         ) if path.is_dir() else [path]
     
+    def call_ai(self, name: str):
+        """调用 AI 进行番剧信息解析
+        name: 番剧文件名
+        """
+        try:
+            res = requests.post("https://api.moonshot.cn/v1/chat/completions", headers={
+                "Authorization": "Bearer " + KIMI_API_KEY, "Content-Type": "application/json"
+            }, json={
+                "model": "moonshot-v1-8k", "messages": [{"role": "user", "content": f"{name}\n\n{AI_PROMPT}"}]
+            }, timeout=None)
+        except:
+            raise ValueError("无法连接到 KIMI，请更换网络环境后再试一次")
+
+        return res.json()["choices"][0]["message"]["content"]
+    
     def get_ani_info(self, name: str) -> dict:
         """获取番剧的信息
-        name: 要查询的番剧的名称
+        name: 番剧文件名
         """
-        match = re.match(r"(?i)(.+?)(?:_s(\d+)){0,1}$", re.sub(r"\s*(\[|\().*?(\]|\))\s*", '', name))
+        match = re.match(r"(?i)(.+?)(?:_s(\d+)){0,1}$", self.call_ai(name) if CALL_AI else re.sub(r"\s*(\[|\().*?(\]|\))\s*", '', name))
         self.season: int = int(match[2]) if match[2] else 1
         
         try:
             res = requests.get(f"https://api.themoviedb.org/3/search/tv", params={
-                "query": match[1],
-                "language": "zh-CN",
-                "api_key": TMDB_API_KEY
+                "query": match[1], "language": "zh-CN", "api_key": TMDB_API_KEY
             }, headers={"accept": "application/json"}, timeout=None)
             res.raise_for_status()
         except:
@@ -119,7 +135,7 @@ class AniSort(object):
         if (parse_info :=  self.parse(path.name)) and parse_info["normalize"]:
             # 处理字幕文件
             if (suffix := path.suffix) == ".ass":
-                suffix = (NORMALIZE_SUFFIX if NORMALIZE_SUFFIX else SUFFIX_MAP.get(path.stem.split('.')[-1].lower(), '')) + suffix
+                suffix = SUFFIX_MAP.get(path.stem.split('.')[-1].lower(), '') + suffix
 
             return f"./{self.ani_name}/" + parse_info["normalize"].format(
                 ani_name=self.ani_name,
