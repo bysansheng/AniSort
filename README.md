@@ -25,7 +25,7 @@ AniSort("./xxx").move_files()
 
 首先通过 **TMDB API** 与 **原文件夹的名称** 获取番剧信息
 
-Ps：可在文件夹后面添加 `下划线+S+数字` 来指明 Season，例如 `[xxx] 赛马娘_S2 [1080p]`
+Ps：可在文件夹后面添加 `下划线+S+数字` 来指明 Season，例如 `[xxx] 赛马娘_S2 [1080p]`，也可接入 AI 进行自动解析
 
 再根据元数据对可识别的文件进行格式化重命名
 
@@ -51,7 +51,7 @@ Season 01/title (2018) - S01E02.mkv
 └── [xxx]title - S01E02.mkv
 ```
 
-对于无法识别的文件（如图片、音乐）将丢到 `Unknown_Files` 目录
+对于无法识别的文件，将丢到 `Unknown_Files` 目录
 
 ## 效果
 
@@ -89,10 +89,17 @@ title (2018)/
 ```python
 # 请前往 TMDB 注册 api_key (32位的那个)
 # https://www.themoviedb.org/settings/api
-TMDB_API_KEY = "your_api_key_here"
+TMDB_API_KEY: str = "your_api_key_here"
 
 # 是否手动选择 TMDB 的搜索结果
-TMDB_SELECTED: bool = True
+TMDB_SELECTED: bool = False
+
+# 是否调用 AI 进行番剧信息解析
+CALL_AI: bool = True
+
+# 请前往 kimi 注册 api_key（仅在 CALL_AI 的值为 True 时需要）
+# https://platform.moonshot.cn/console/api-keys
+KIMI_API_KEY: str = "your_api_key_here"
 
 # 是否生成对照表
 GENERATE_COMPARISON_TABLE: bool = True
