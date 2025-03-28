@@ -4,10 +4,11 @@ from typing import Union
 import difflib
 import requests
 import shutil
+import json
 import os
 import re
 
-from .config import (
+from config import (
     TMDB_API_KEY,
     PATTERN,
     TMDB_SELECTED,
@@ -22,7 +23,8 @@ SUFFIX_MAP = {
     "cht": ".zh-TW", "tc": ".zh-TW", "jptc": ".zh-TW"
 }
 
-AI_PROMPT: str = "请你以 {name}_S{season} 的格式解析这个番剧文件名，首先 name 为番剧的名称，然后 season 为番剧的季数，默认为 1，最后只返回解析内容，例如：Uma Musume Pretty Derby_S2"
+AI_PROMPT1: str = "请你解析这个番剧文件名，最后只返回番剧名称，例如：Uma Musume Pretty Derby"
+AI_PROMPT2: str = "请你根据我发送的相关信息解析这个番剧文件名，最后只返回番剧的 season 对应的阿拉伯数字，例如：2"
 
 
 class AniSort(object):
@@ -54,7 +56,7 @@ class AniSort(object):
             reverse=True
         ) if path.is_dir() else [path]
     
-    def call_ai(self, name: str):
+    def call_ai(self, content: str):
         """调用 AI 进行番剧信息解析
         name: 番剧文件名
         """
@@ -62,27 +64,29 @@ class AniSort(object):
             res = requests.post("https://api.deepseek.com/chat/completions", headers={
                 "Authorization": "Bearer " + AI_API_KEY, "Content-Type": "application/json"
             }, json={
-                "model": "deepseek-chat", "messages": [{"role": "user", "content": f"{name}\n\n{AI_PROMPT}"}]
+                "model": "deepseek-chat", "messages": [{"role": "user", "content": content}]
             }, timeout=None)
         except:
             raise ValueError("无法连接到 DeepSeek，请更换网络环境后再试一次")
 
         return res.json()["choices"][0]["message"]["content"]
+
+    def call_tmdb(self, url: str , params: dict = {}):
+        try:
+            res = requests.get(url, params={
+                **params, "language": "zh-CN", "api_key": TMDB_API_KEY
+            }, headers={"accept": "application/json"}, timeout=None)
+            return res
+        except:
+            raise ValueError("无法连接到 TMDB，请更换网络环境后再试一次")
     
     def get_ani_info(self, name: str) -> dict:
         """获取番剧的信息
         name: 番剧文件名
         """
-        match = re.match(r"(?i)(.+?)(?:_s(\d+)){0,1}$", self.call_ai(name) if CALL_AI else re.sub(r"\s*(\[|\().*?(\]|\))\s*", '', name))
-        self.season: int = int(match[2]) if match[2] else 1
-        
-        try:
-            res = requests.get(f"https://api.themoviedb.org/3/search/tv", params={
-                "query": match[1], "language": "zh-CN", "api_key": TMDB_API_KEY
-            }, headers={"accept": "application/json"}, timeout=None)
-            res.raise_for_status()
-        except:
-            raise ValueError("无法连接到 TMDB，请更换网络环境后再试一次")
+        query: str = self.call_ai(f"{name}\n\n{AI_PROMPT1}") if CALL_AI \
+            else (match := re.match(r"(?i)(.+?)(?:_s(\d+)){0,1}$", re.sub(r"\s*(\[|\().*?(\]|\))\s*", '', name)))[1]
+        res = self.call_tmdb(url=f"https://api.themoviedb.org/3/search/tv", params={"query": query})
 
         try:
             info: dict = res.json()["results"][0]
@@ -98,6 +102,12 @@ class AniSort(object):
         except:
             raise ValueError("无法在 TMDB 中搜索到该动漫，请更改文件夹名称后再试一次")
         
+        if CALL_AI:
+            seasons_conten: list = '\n'.join([f'{j["name"]}：{i}' for i, j in enumerate(self.call_tmdb(url=f'https://api.themoviedb.org/3/tv/{info["id"]}').json()["seasons"])])
+            self.season = int(self.call_ai(f"{name}\n\n{seasons_conten}\n\n{AI_PROMPT2}"))
+        else:
+            self.season: int  = int(match[2]) if match[2] else 1
+
         return {
             "name": info["name"],
             "date": info["first_air_date"].split('-')[0] or "年份未知"
@@ -112,7 +122,7 @@ class AniSort(object):
                 if p["type"] == "SE_EP":
                     season, match_2 = int(match[1]), match[2]
                 else:
-                    match_2 = match[1] if p["type"]  == "EP" else match[2] or '1'
+                    match_2: str = match[1] if p["type"]  == "EP" else match[2] or '1'
                     season: int = self.season
                 
                 # 处理第0集的情况
@@ -136,7 +146,7 @@ class AniSort(object):
         if (parse_info :=  self.parse(path.name)) and parse_info["normalize"]:
             # 处理字幕文件
             if (suffix := path.suffix) == ".ass":
-                suffix = SUFFIX_MAP.get(path.stem.split('.')[-1].lower(), '') + suffix
+                suffix: str = SUFFIX_MAP.get(path.stem.split('.')[-1].lower(), '') + suffix
 
             return f"{self.parent_dir}/" + parse_info["normalize"].format(
                 ani_name=self.ani_name,
@@ -151,7 +161,7 @@ class AniSort(object):
     def move_files(self) -> None:
         """移动并重命名所有文件"""
         # 创建所有目标目录
-        dest_dirs = {os.path.dirname(dest) for dest in self.table.values()}
+        dest_dirs: dict = {os.path.dirname(dest) for dest in self.table.values()}
         [os.makedirs(d, exist_ok=True) for d in dest_dirs]
 
         # 批量移动文件
