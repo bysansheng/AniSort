@@ -6,17 +6,17 @@ TMDB_API_KEY: str = "your_api_key_here"
 TMDB_SELECTED: bool = False
 
 # 是否调用 AI 进行番剧信息解析
-CALL_AI: bool = False
+CALL_AI: bool = True
 
-# 请前往 kimi 注册 api_key（仅在 CALL_AI 的值为 True 时需要）
-# https://platform.moonshot.cn/console/api-keys
-KIMI_API_KEY: str = "your_api_key_here"
+# 请前往 DeepSeek 注册 api_key（仅在 CALL_AI 的值为 True 时需要）
+# https://platform.deepseek.com/api_keys
+AI_API_KEY: str = "your_api_key_here"
 
 # 是否生成对照表
 GENERATE_COMPARISON_TABLE: bool = True
 
 # 是否生成 .ignore 文件
-GENERATE_IGNORE_FILE: bool = False
+GENERATE_IGNORE_FILE: bool = True
 
 # 分类规则 
 PATTERN: list = [

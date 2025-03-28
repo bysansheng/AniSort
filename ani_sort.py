@@ -14,7 +14,7 @@ from .config import (
     GENERATE_COMPARISON_TABLE,
     GENERATE_IGNORE_FILE,
     CALL_AI,
-    KIMI_API_KEY
+    AI_API_KEY
 )
 
 SUFFIX_MAP = {
@@ -59,13 +59,13 @@ class AniSort(object):
         name: 番剧文件名
         """
         try:
-            res = requests.post("https://api.moonshot.cn/v1/chat/completions", headers={
-                "Authorization": "Bearer " + KIMI_API_KEY, "Content-Type": "application/json"
+            res = requests.post("https://api.deepseek.com/chat/completions", headers={
+                "Authorization": "Bearer " + AI_API_KEY, "Content-Type": "application/json"
             }, json={
-                "model": "moonshot-v1-8k", "messages": [{"role": "user", "content": f"{name}\n\n{AI_PROMPT}"}]
+                "model": "deepseek-chat", "messages": [{"role": "user", "content": f"{name}\n\n{AI_PROMPT}"}]
             }, timeout=None)
         except:
-            raise ValueError("无法连接到 KIMI，请更换网络环境后再试一次")
+            raise ValueError("无法连接到 DeepSeek，请更换网络环境后再试一次")
 
         return res.json()["choices"][0]["message"]["content"]
     
