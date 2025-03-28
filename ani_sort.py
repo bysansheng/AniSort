@@ -4,7 +4,6 @@ from typing import Union
 import difflib
 import requests
 import shutil
-import json
 import os
 import re
 
