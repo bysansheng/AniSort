@@ -7,7 +7,7 @@ import shutil
 import os
 import re
 
-from config import (
+from .config import (
     TMDB_API_KEY,
     PATTERN,
     TMDB_SELECTED,
@@ -145,7 +145,7 @@ class AniSort(object):
                 match_2=parse_info["match_2"]
             ) + suffix
         
-        return f"./{self.ani_name}/Unknown_Files/{path.name}"
+        return f"{self.path.parent}/{self.ani_name}/Unknown_Files/{path.name}"
     
     def move_files(self) -> None:
         """移动并重命名所有文件"""
@@ -159,6 +159,8 @@ class AniSort(object):
                 shutil.move(src, dest)
             else:
                 self.table[src] = "Unknown_Files/" + Path(src).name
+            
+            print(f"自动整理：{src}\n => {self.table[src]}")
 
         # 删除原文件夹
         if self.path.exists():
