@@ -38,6 +38,7 @@ class AniSort(object):
         
         self.ani_info: dict = self.get_ani_info(self.path.stem)
         self.ani_name: str = f'{self.ani_info["name"]} ({self.ani_info["date"]})'
+        self.parent_dir: str = f"{self.path.parent}/{self.ani_name}"
         self.table: dict = {
             str(file): self.normalize(file)
             for file in self.get_all_files(self.path)
@@ -137,7 +138,7 @@ class AniSort(object):
             if (suffix := path.suffix) == ".ass":
                 suffix = SUFFIX_MAP.get(path.stem.split('.')[-1].lower(), '') + suffix
 
-            return f"./{self.ani_name}/" + parse_info["normalize"].format(
+            return f"{self.parent_dir}/" + parse_info["normalize"].format(
                 ani_name=self.ani_name,
                 raw_match=parse_info["raw_match"].strip(" []") if parse_info["type"] == "Label" else  parse_info["raw_match"],
                 season=parse_info["season"],
@@ -145,7 +146,7 @@ class AniSort(object):
                 match_2=parse_info["match_2"]
             ) + suffix
         
-        return f"{self.path.parent}/{self.ani_name}/Unknown_Files/{path.name}"
+        return f"{self.parent_dir}/Unknown_Files/{path.name}"
     
     def move_files(self) -> None:
         """移动并重命名所有文件"""
@@ -165,20 +166,20 @@ class AniSort(object):
         # 删除原文件夹
         if self.path.exists():
             if self.get_all_files(self.path):
-                shutil.move(self.path, f'./{self.ani_name}/Unknown_Files/{datetime.now().strftime("%Y%m%d%H%M%S")}_{self.path.name}')
+                shutil.move(self.path, f'{self.parent_dir}/Unknown_Files/{datetime.now().strftime("%Y%m%d%H%M%S")}_{self.path.name}')
             else:
                 shutil.rmtree(self.path)
 
         # 生成 .ignore 文件
         if GENERATE_IGNORE_FILE:
-            for root, _, _ in os.walk(f"./{self.ani_name}"):
+            for root, _, _ in os.walk(self.parent_dir):
                 if os.path.basename(root) in ["Interviews", "Other", "Unknown_Files"]:
                     with open(os.path.join(root, ".ignore"), 'w') as ignore_file:
                         ignore_file.write('')
 
         # 写入对照表
         if GENERATE_COMPARISON_TABLE:
-            with open(f"./{self.ani_name}/Comparison_Table.txt", "a", encoding="utf-8") as file:
+            with open(f"{self.parent_dir}/Comparison_Table.txt", "a", encoding="utf-8") as file:
                 file.write("\n" + "\n\n".join(
                     "{}\n└── {}".format('/'.join(Path(v).parts[-2:]), Path(k).name)
                     for k, v in self.table.items()
