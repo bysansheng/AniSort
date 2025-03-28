@@ -7,7 +7,7 @@ import shutil
 import os
 import re
 
-from config import (
+from .config import (
     TMDB_API_KEY,
     PATTERN,
     TMDB_SELECTED,
@@ -22,7 +22,7 @@ SUFFIX_MAP = {
     "cht": ".zh-TW", "tc": ".zh-TW", "jptc": ".zh-TW"
 }
 
-AI_PROMPT1: str = "请你解析这个番剧文件名，最后只返回番剧名称，例如：Uma Musume Pretty Derby"
+AI_PROMPT1: str = "请你解析这个番剧文件名，最后只返回番剧对应的名称，例如：Uma Musume Pretty Derby"
 AI_PROMPT2: str = "请你根据我发送的相关信息解析这个番剧文件名，最后只返回番剧的 season 对应的阿拉伯数字，例如：2"
 
 
@@ -63,7 +63,7 @@ class AniSort(object):
             res = requests.post("https://api.deepseek.com/chat/completions", headers={
                 "Authorization": "Bearer " + AI_API_KEY, "Content-Type": "application/json"
             }, json={
-                "model": "deepseek-chat", "messages": [{"role": "user", "content": content}]
+                "model": "deepseek-reasoner", "messages": [{"role": "user", "content": content}]
             }, timeout=None)
         except:
             raise ValueError("无法连接到 DeepSeek，请更换网络环境后再试一次")
