@@ -31,7 +31,7 @@ PATTERN: list = [
     # 正片集数
     {
         "type": "SP",
-        "regex": r"(?i)S00E[ _-]?(\d+(?:[v|_]\d+){0,1})",
+        "regex": r"(?i)(S00E)[ _-]?(\d+(?:[v|_]\d+){0,1})",
         "normalize": "Season 00/{ani_name} - S00E{match_2}",
         "priority": 1
     },
