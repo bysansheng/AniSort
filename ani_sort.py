@@ -7,14 +7,15 @@ import shutil
 import os
 import re
 
-from .config import (
+from config import (
     TMDB_API_KEY,
     PATTERN,
     TMDB_SELECTED,
     GENERATE_COMPARISON_TABLE,
     GENERATE_IGNORE_FILE,
     CALL_AI,
-    AI_API_KEY
+    AI_API_KEY,
+    PROXIES
 )
 
 SUFFIX_MAP = {
@@ -23,7 +24,7 @@ SUFFIX_MAP = {
 }
 
 AI_PROMPT1: str = "请你解析这个番剧文件名，最后只返回番剧对应的名称，例如：Uma Musume Pretty Derby"
-AI_PROMPT2: str = "请你根据我发送的相关信息解析这个番剧文件名，最后只返回番剧的 season 对应的阿拉伯数字，例如：2"
+AI_PROMPT2: str = "请你根据我发送的相关信息解析这个番剧文件名，最后只返回番剧的 season 对应的阿拉伯数字，默认为 1"
 
 
 class AniSort(object):
@@ -74,7 +75,7 @@ class AniSort(object):
         try:
             res = requests.get(url, params={
                 **params, "language": "zh-CN", "api_key": TMDB_API_KEY
-            }, headers={"accept": "application/json"}, timeout=None)
+            }, proxies=PROXIES, headers={"accept": "application/json"}, timeout=None)
             return res
         except:
             raise ValueError("无法连接到 TMDB，请更换网络环境后再试一次")
@@ -102,7 +103,7 @@ class AniSort(object):
             raise ValueError("无法在 TMDB 中搜索到该动漫，请更改文件夹名称后再试一次")
         
         if CALL_AI:
-            seasons_conten: list = '\n'.join([f'{j["name"]}：{i}' for i, j in enumerate(self.call_tmdb(url=f'https://api.themoviedb.org/3/tv/{info["id"]}').json()["seasons"])])
+            seasons_conten: list = '\n'.join([f'{j["name"]}：{i}' for i, j in enumerate(self.call_tmdb(url=f'https://api.themoviedb.org/3/tv/{info["id"]}').json()["seasons"][1:])])
             self.season = int(self.call_ai(f"{name}\n\n{seasons_conten}\n\n{AI_PROMPT2}"))
         else:
             self.season: int  = int(match[2]) if match[2] else 1
