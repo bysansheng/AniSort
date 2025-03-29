@@ -14,7 +14,8 @@ from config import (
     GENERATE_COMPARISON_TABLE,
     GENERATE_IGNORE_FILE,
     CALL_AI,
-    AI_API_KEY
+    AI_API_KEY,
+    PROXIES
 )
 
 SUFFIX_MAP = {
@@ -74,7 +75,7 @@ class AniSort(object):
         try:
             res = requests.get(url, params={
                 **params, "language": "zh-CN", "api_key": TMDB_API_KEY
-            }, headers={"accept": "application/json"}, timeout=None)
+            }, proxies=PROXIES, headers={"accept": "application/json"}, timeout=None)
             return res
         except:
             raise ValueError("无法连接到 TMDB，请更换网络环境后再试一次")
@@ -83,9 +84,9 @@ class AniSort(object):
         """获取番剧的信息
         name: 番剧文件名
         """
-        query: str = self.call_ai(f"{name}\n\n{AI_PROMPT1}") if CALL_AI \
+        query: str = print("调用 AI - 1") or self.call_ai(f"{name}\n\n{AI_PROMPT1}") if CALL_AI \
             else (match := re.match(r"(?i)(.+?)(?:_s(\d+)){0,1}$", re.sub(r"\s*(\[|\().*?(\]|\))\s*", '', name)))[1]
-        res = self.call_tmdb(url=f"https://api.themoviedb.org/3/search/tv", params={"query": query})
+        res = print("调用 TMDB") or self.call_tmdb(url=f"https://api.themoviedb.org/3/search/tv", params={"query": query})
 
         try:
             info: dict = res.json()["results"][0]
@@ -102,7 +103,8 @@ class AniSort(object):
             raise ValueError("无法在 TMDB 中搜索到该动漫，请更改文件夹名称后再试一次")
         
         if CALL_AI:
-            seasons_conten: list = '\n'.join([f'{j["name"]}：{i + 1}' for i, j in enumerate(self.call_tmdb(url=f'https://api.themoviedb.org/3/tv/{info["id"]}').json()["seasons"][1:])])
+            seasons_conten: list = print("调用 AI - 2") or '\n'.join([f'{j["name"]}：{i + 1}' for i, j in enumerate(
+                self.call_tmdb(url=f'https://api.themoviedb.org/3/tv/{info["id"]}').json()["seasons"][1:])])
             self.season = int(self.call_ai(f"{name}\n\n{seasons_conten}\n\n{AI_PROMPT2}"))
         else:
             self.season: int  = int(match[2]) if match[2] else 1
@@ -196,4 +198,5 @@ class AniSort(object):
 
 
 if __name__ == "__main__":
-    AniSort(input("请输入文件夹路径: ")).move_files()
+    while True:
+        AniSort(input("请输入文件夹路径: ")).move_files()
