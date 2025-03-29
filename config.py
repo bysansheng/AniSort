@@ -91,7 +91,7 @@ PATTERN: list = [
     # CD/BD/DVD（实体介质）
     {
         "type": "CD",
-        "regex": r"(?i)\b(CD|BD|DVD|DISC|Disk|Vol)[ _-]?(\d*(?:[v|_]\d+){0,1})",
+        "regex": r"(?i)\b(CD|BD[^Rip]|DVD|DISC|Disk|Vol)[ _-]?(\d*(?:[v|_]\d+){0,1})",
         "normalize": "Other/S{season}_CD{match_2}",
         "priority": 5
     },
