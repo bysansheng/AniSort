@@ -14,8 +14,7 @@ from config import (
     GENERATE_COMPARISON_TABLE,
     GENERATE_IGNORE_FILE,
     CALL_AI,
-    AI_API_KEY,
-    PROXIES
+    AI_API_KEY
 )
 
 SUFFIX_MAP = {
@@ -75,7 +74,7 @@ class AniSort(object):
         try:
             res = requests.get(url, params={
                 **params, "language": "zh-CN", "api_key": TMDB_API_KEY
-            }, proxies=PROXIES, headers={"accept": "application/json"}, timeout=None)
+            }, headers={"accept": "application/json"}, timeout=None)
             return res
         except:
             raise ValueError("无法连接到 TMDB，请更换网络环境后再试一次")
