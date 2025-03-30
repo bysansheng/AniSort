@@ -67,7 +67,7 @@ class AniSort(object):
                 "model": "deepseek-reasoner", "messages": [{"role": "user", "content": content}]
             }, timeout=None)
         except:
-            raise ValueError("无法连接到 DeepSeek，请更换网络环境后再试一次")
+            raise Exception("无法连接到 DeepSeek，请更换网络环境后再试一次")
 
         return res.json()["choices"][0]["message"]["content"]
 
@@ -78,7 +78,7 @@ class AniSort(object):
             }, proxies=PROXIES, headers={"accept": "application/json"}, timeout=None)
             return res
         except:
-            raise ValueError("无法连接到 TMDB，请更换网络环境后再试一次")
+            raise Exception("无法连接到 TMDB，请更换网络环境后再试一次")
     
     def get_ani_info(self, name: str) -> dict:
         """获取番剧的信息
@@ -100,7 +100,7 @@ class AniSort(object):
                 if (_input := input("请输入你想选择的结果的序号：")).isdigit():
                     info: dict = res.json()["results"][int(_input)]
         except:
-            raise ValueError("无法在 TMDB 中搜索到该动漫，请更改文件夹名称后再试一次")
+            raise Exception("无法在 TMDB 中搜索到该动漫，请更改文件夹名称后再试一次")
         
         if CALL_AI:
             seasons_conten: list = print("调用 AI - 2") or '\n'.join([f'{j["name"]}：{i + 1}' for i, j in enumerate(
