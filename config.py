@@ -175,12 +175,12 @@ PATTERN: list = [
     },
 
     # 保留标签
-    {
-        "type": "Label",
-        "regex": r"(?i)\s(\[.+?(\d*(?:[v|_]\d+){0,1})\])",
-        "normalize": "Other/S{season}_{raw_match}",
-        "priority": 114514
-    }
+    # {
+    #     "type": "Label",
+    #     "regex": r"(?i)\s(\[.+?(\d*(?:[v|_]\d+){0,1})\])",
+    #     "normalize": "Other/S{season}_{raw_match}",
+    #     "priority": 114514
+    # }
 ]
 
 PATTERN.sort(key=lambda x: x['priority'])
