@@ -170,7 +170,7 @@ class AniSort(object):
             if not(os.path.isfile(dest)):
                 shutil.move(src, dest)
             else:
-                self.table[src] = "Unknown_Files/" + Path(src).name
+                self.table[src] = Path(src).name
             
             print(f"自动整理：{src}\n => {self.table[src]}")
 
