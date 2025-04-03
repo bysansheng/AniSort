@@ -30,17 +30,17 @@ AI_PROMPT2: str = "请你根据我发送的相关信息解析这个番剧文件�
 class AniSort(object):
 
     def __init__(self, path: Union[str, Path]) -> None:
-        if isinstance(path, str):
-            self.path: Path = Path(path.strip('"\'').strip())
+        self.path: Path = Path(path.strip('"\'').strip()) if isinstance(path, str) else path
+
+        self.ani_info: dict = self.get_ani_info(self.path.stem)
+        self.ani_name: str = f'{self.ani_info["name"]} ({self.ani_info["date"]})'
+        self.parent_dir: str = f"{parent_dir.rstrip('/') if parent_dir else self.path.parent}/{self.ani_name}"
 
         self.patterns: dict = [{
             **p,
             "regex": re.compile(p["regex"]),
         } for p in PATTERN]
         
-        self.ani_info: dict = self.get_ani_info(self.path.stem)
-        self.ani_name: str = f'{self.ani_info["name"]} ({self.ani_info["date"]})'
-        self.parent_dir: str = f"{self.path.parent}/{self.ani_name}"
         self.table: dict = {
             str(file): self.normalize(file)
             for file in self.get_all_files(self.path)
