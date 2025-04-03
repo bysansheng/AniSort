@@ -174,7 +174,7 @@ class AniSort(object):
             
             print(f"自动整理：{src}\n => {self.table[src]}")
 
-        # 删除原文件夹
+        # 删除原文件（夹）
         if self.path.exists():
             if self.get_all_files(self.path):
                 shutil.move(self.path, f'{self.parent_dir}/Unknown_Files/{datetime.now().strftime("%Y%m%d%H%M%S")}_{self.path.name}')
