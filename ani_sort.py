@@ -178,8 +178,10 @@ class AniSort(object):
         if self.path.exists():
             if self.get_all_files(self.path):
                 shutil.move(self.path, f'{self.parent_dir}/Unknown_Files/{datetime.now().strftime("%Y%m%d%H%M%S")}_{self.path.name}')
-            else:
+            elif self.path.is_dir():
                 shutil.rmtree(self.path)
+            else:
+                os.remove(self.path)
 
         # 生成 .ignore 文件
         if GENERATE_IGNORE_FILE:
