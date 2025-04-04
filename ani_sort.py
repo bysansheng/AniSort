@@ -19,8 +19,8 @@ from config import (
 )
 
 SUFFIX_MAP = {
-    "chs": ".zh-CN.forced", "sc": ".zh-CN.forced", "jpsc": ".zh-CN.forced",
-    "cht": ".zh-TW", "tc": ".zh-TW", "jptc": ".zh-TW"
+    "chs": ".zh-CN.forced", "sc": ".zh-CN.forced", "jpsc": ".zh-CN.forced", "scjp": ".zh-CN.forced",
+    "cht": ".zh-TW", "tc": ".zh-TW", "jptc": ".zh-TW", "tcjp": ".zh-TW"
 }
 
 AI_PROMPT1: str = "请你解析这个番剧文件名，最后只返回番剧对应的名称，不包含 season 的序号和标题，例如：Uma Musume Pretty Derby"
