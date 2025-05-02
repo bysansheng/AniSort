@@ -103,7 +103,7 @@ class AniSort(object):
             raise Exception("无法在 TMDB 中搜索到该动漫，请更改文件夹名称后再试一次")
         
         if CALL_AI:
-            seasons_conten: list = print("调用 AI - 2") or '\n'.join([f'{j["name"]}：第 {i + 1} 季' for i, j in enumerate(
+            seasons_conten: list = print("调用 AI - 2") or '\n'.join([f'{i + 1}、{j["name"]}' for i, j in enumerate(
                 self.call_tmdb(url=f'https://api.themoviedb.org/3/tv/{info["id"]}').json()["seasons"][1:])])
             self.season = int(self.call_ai(f"{name}\n\n{seasons_conten}\n\n{AI_PROMPT2}"))
         else:
