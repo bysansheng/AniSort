@@ -24,7 +24,7 @@ SUFFIX_MAP = {
 }
 
 AI_PROMPT1: str = "请你解析这个番剧文件名，最后只返回番剧对应的名称，不包含 season 的序号和标题，例如：Uma Musume Pretty Derby"
-AI_PROMPT2: str = "请你根据我发送的相关信息解析这个番剧文件名，最后只返回番剧的 season 对应的阿拉伯数字，默认为 1"
+AI_PROMPT2: str = "请你根据我发送的相关信息解析这个番剧文件名，最后只返回番剧的 season 对应的阿拉伯数字，默认为 1，注意不要与 Episode 搞混"
 
 
 class AniSort(object):
@@ -103,7 +103,7 @@ class AniSort(object):
             raise Exception("无法在 TMDB 中搜索到该动漫，请更改文件夹名称后再试一次")
         
         if CALL_AI:
-            seasons_conten: list = print("调用 AI - 2") or '\n'.join([f'{j["name"]}：{i + 1}' for i, j in enumerate(
+            seasons_conten: list = print("调用 AI - 2") or '\n'.join([f'{j["name"]}：第 {i + 1} 季' for i, j in enumerate(
                 self.call_tmdb(url=f'https://api.themoviedb.org/3/tv/{info["id"]}').json()["seasons"][1:])])
             self.season = int(self.call_ai(f"{name}\n\n{seasons_conten}\n\n{AI_PROMPT2}"))
         else:
