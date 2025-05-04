@@ -106,7 +106,7 @@ class AniSort(object):
             info: list = self.call_tmdb(url=f'https://api.themoviedb.org/3/tv/{info["id"]}').json()["seasons"]
             seasons_conten: list = print("调用 AI - 2") or '\n'.join([
                 f'{j["name"]}: {i + 1}'
-                for i, j in enumerate(([] if info[0]["name"] == "特别篇" else [{}]) + info)
+                for i, j in enumerate(info[1:] if info[0]["name"] == "特别篇" else info)
             ])
             self.season = int(self.call_ai(f"{name}\n\n{seasons_conten}\n\n{AI_PROMPT2}"))
         else:
