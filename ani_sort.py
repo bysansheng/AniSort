@@ -23,7 +23,7 @@ SUFFIX_MAP = {
     "cht": ".zh-TW", "tc": ".zh-TW", "jptc": ".zh-TW", "tcjp": ".zh-TW"
 }
 
-AI_PROMPT1: str = "请你解析这个番剧文件名，最后只返回番剧对应的名称，不包含 season 的序号和标题，例如：Uma Musume Pretty Derby"
+AI_PROMPT1: str = "请你解析这个番剧文件名，最后只返回番剧对应的名称，不包含 season 的序号和标题，注意与字幕组区分，例如：Uma Musume Pretty Derby"
 AI_PROMPT2: str = "请你根据我发送的相关信息解析这个番剧文件名，最后只返回番剧的 season 对应的阿拉伯数字，默认为 1，注意不要与 Episode 搞混"
 
 
