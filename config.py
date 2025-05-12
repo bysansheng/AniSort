@@ -43,7 +43,13 @@ PATTERN: list = [
     },
     {
         "type": "EP",
-        "regex": r"(?i)\s(\d{2,3}(?:[v|_]\d+){0,1})(?:\s*|[\s|（|【|\(|\[].*)\.(?:mkv|mp4|mka|ass)",
+        "regex": r"(?i)\s(\d{2,3}(?:[v|_]\d+){0,1})\s.*\.(?:mkv|mp4|mka|ass)",
+        "normalize": "Season {season}/{ani_name} - S{season}E{match_2}",
+        "priority": 3
+    },
+    {
+        "type": "EP",
+        "regex": r"(?i)\s(\d{2,3}(?:[v|_]\d+){0,1})[（|【|\(|\[].*\.(?:mkv|mp4|mka|ass)",
         "normalize": "Season {season}/{ani_name} - S{season}E{match_2}",
         "priority": 3
     },
