@@ -83,7 +83,13 @@ PATTERN: list = [
     # 特典
     {
         "type": "IV",
-        "regex": r"(?i)\b(IV|Interview)[ _-]?(?:\]\[){0,1}(\d*(?:[v|_]\d+){0,1})",
+        "regex": r"(?i)\b(Interview)[ _-]?(?:\]\[){0,1}(\d*(?:[v|_]\d+){0,1})",
+        "normalize": "Interviews/S{season}_访谈{match_2}",
+        "priority": 5
+    },
+    {
+        "type": "IV",
+        "regex": r"(?i)\b(IV)[ _-]?(?:\]\[){0,1}(\d*(?:[v|_]\d+){0,1})",
         "normalize": "Interviews/S{season}_访谈{match_2}",
         "priority": 8
     },
