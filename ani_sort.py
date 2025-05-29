@@ -32,7 +32,7 @@ class AniSort(object):
     def __init__(self, path: Union[str, Path]) -> None:
         self.path: Path = Path(path.strip('"\'').strip()) if isinstance(path, str) else path
 
-        self.ani_info: dict = self.get_ani_info(self.path)
+        self.ani_info: dict = self.get_ani_info(self.path.stem)
         self.ani_name: str = f'{self.ani_info["name"]} ({self.ani_info["date"]})'.replace(':', '：').replace('?', '？')
         self.parent_dir: str = f"{parent_dir.rstrip('/') if parent_dir else self.path.parent}/{self.ani_name}"
 
