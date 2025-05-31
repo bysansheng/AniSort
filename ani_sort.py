@@ -35,6 +35,7 @@ class AniSort(object):
         self.ani_info: dict = self.get_ani_info(self.path.stem)
         self.ani_name: str = f'{self.ani_info["name"]} ({self.ani_info["date"]})'.replace(':', '：').replace('?', '？')
         self.parent_dir: str = f"{parent_dir.rstrip('/') if parent_dir else self.path.parent}/{self.ani_name}"
+        self.season: int = None
 
         self.patterns: dict = [{
             **p,
@@ -108,7 +109,7 @@ class AniSort(object):
                 f'{j["name"]}: {i + 1}'
                 for i, j in enumerate(seasons_info[1:] if seasons_info[0]["name"] == "特别篇" else seasons_info)
             ])
-            self.season = int(self.call_ai(f"{name}\n\n{seasons_conten}\n\n{AI_PROMPT2}"))
+            self.season: int = int(self.call_ai(f"{name}\n\n{seasons_conten}\n\n{AI_PROMPT2}"))
         else:
             self.season: int  = int(match[2]) if match[2] else 1
 
