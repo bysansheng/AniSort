@@ -55,13 +55,19 @@ PATTERN: list = [
     },
     {
         "type": "EP",
+        "regex": r"(?i)(?:Episode|第)[ _-]?(\d+(?:[v|_]\d+){0,1})",
+        "normalize": "Season {season}/{ani_name} - S{season}E{match_2}",
+        "priority": 5
+    },
+    {
+        "type": "EP",
         "regex": r"(?i)\[(\d{2,3}(?:[v|_]\d+){0,1})\].*\.(?:mkv|mp4|mka|ass)",
         "normalize": "Season {season}/{ani_name} - S{season}E{match_2}",
         "priority": 7
     },
     {
         "type": "EP",
-        "regex": r"(?i)(?:EP|E|Episode|第)[ _-]?(\d+(?:[v|_]\d+){0,1})",
+        "regex": r"(?i)(?:EP|E)[ _-]?(\d+(?:[v|_]\d+){0,1})",
         "normalize": "Season {season}/{ani_name} - S{season}E{match_2}",
         "priority": 7
     },
