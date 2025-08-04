@@ -1,13 +1,6 @@
-from datetime import datetime
-from pathlib import Path
-from typing import Union
-import difflib
-import requests
-import shutil
-import os
-import re
+from .ani_db.ani_db import AniDBUDPClient
 
-from config import (
+from .config import (
     TMDB_API_KEY,
     PATTERN,
     TMDB_SELECTED,
@@ -15,33 +8,44 @@ from config import (
     GENERATE_IGNORE_FILE,
     CALL_AI,
     AI_API_KEY,
-    PROXIES
+    PROXIES,
+    DELETE_UNKNOWN_FILES
 )
+
+from datetime import datetime
+from pathlib import Path
+from typing import Union
+import difflib
+import requests
+import shutil
+import re
 
 SUFFIX_MAP = {
     "chs": ".zh-CN.forced", "sc": ".zh-CN.forced", "jpsc": ".zh-CN.forced", "scjp": ".zh-CN.forced",
     "cht": ".zh-TW", "tc": ".zh-TW", "jptc": ".zh-TW", "tcjp": ".zh-TW"
 }
 
-AI_PROMPT1: str = "请你解析这个番剧文件名，最后只返回番剧对应的名称，不包含 season 的序号和标题，注意与字幕组区分，例如：Uma Musume Pretty Derby"
-AI_PROMPT2: str = "请你根据我发送的相关信息解析这个番剧文件名，最后只返回番剧的 season 对应的阿拉伯数字，默认为 1，注意不要与 Episode 搞混"
+AI_PROMPT1: str = "请你解析这个番剧文件名，最后只返回番剧对应的名称，不包含季数和标题，也不需要翻译，注意与字幕组区分，例如：[LKSUB][mono][11][1080P].mp4 => mono"
+AI_PROMPT2: str = "请你根据我发送的相关信息解析这个番剧文件名，最后只返回番剧的季数对应的阿拉伯数字，默认为 1，注意不要与集数搞混"
+
+ANIDB = AniDBUDPClient()
 
 
 class AniSort(object):
 
-    def __init__(self, path: Union[str, Path]) -> None:
-        self.path: Path = Path(path.strip('"\'').strip()) if isinstance(path, str) else path
+    def __init__(self, path: Union[str, Path], parent_dir: Union[str, Path] = None) -> None:
+        self.path: Path = Path(path.strip('"\'')) if isinstance(path, str) else path
 
+        self.season: int = None
         self.ani_info: dict = self.get_ani_info(self.path.stem)
         self.ani_name: str = f'{self.ani_info["name"]} ({self.ani_info["date"]})'.replace(':', '：').replace('?', '？')
-        self.parent_dir: str = f"{parent_dir.rstrip('/') if parent_dir else self.path.parent}/{self.ani_name}"
-        self.season: int = None
+        self.parent_dir: str = f"{str(parent_dir).rstrip('/') if parent_dir else self.path.parent}/{self.ani_name}"
 
         self.patterns: dict = [{
             **p,
             "regex": re.compile(p["regex"]),
         } for p in PATTERN]
-        
+
         self.table: dict = {
             str(file): self.normalize(file)
             for file in self.get_all_files(self.path)
@@ -62,24 +66,25 @@ class AniSort(object):
         name: 番剧文件名
         """
         try:
-            res = requests.post("https://api.deepseek.com/chat/completions", headers={
+            res = requests.post(url="https://api.deepseek.com/chat/completions", headers={
                 "Authorization": "Bearer " + AI_API_KEY, "Content-Type": "application/json"
             }, json={
                 "model": "deepseek-reasoner", "messages": [{"role": "user", "content": content}]
             }, timeout=None)
-        except:
-            raise Exception("无法连接到 DeepSeek，请更换网络环境后再试一次")
-
-        return res.json()["choices"][0]["message"]["content"]
+            res.raise_for_status()
+            return res.json()["choices"][0]["message"]["content"]
+        except Exception as e:
+            raise Exception(f"连接 DeepSeek 时发生错误：{e}")
 
     def call_tmdb(self, url: str , params: dict = {}):
         try:
-            res = requests.get(url, params={
+            res = requests.get(url=url, params={
                 **params, "language": "zh-CN", "api_key": TMDB_API_KEY
-            }, proxies=PROXIES, headers={"accept": "application/json"}, timeout=None)
+            }, proxies=PROXIES, headers={"accept": "application/json"}, timeout=60)
+            res.raise_for_status()
             return res
-        except:
-            raise Exception("无法连接到 TMDB，请更换网络环境后再试一次")
+        except Exception as e:
+            raise Exception(f"连接 TMDB 时发生错误：{e}")
     
     def get_ani_info(self, name: str) -> dict:
         """获取番剧的信息
@@ -101,18 +106,22 @@ class AniSort(object):
                 if (_input := input("请输入你想选择的结果的序号：")).isdigit():
                     info: dict = res.json()["results"][int(_input)]
         except:
-            raise Exception("无法在 TMDB 中搜索到该动漫，请更改文件夹名称后再试一次")
+            if not(info := ANIDB.search(name=query)):
+                raise Exception("无法在 TMDB 中搜索到该动漫，请更改文件夹名称后再试一次")
+            
+            info["name"] = info["romaji_name"] or info["kanji_name"] or info["english_name"] or info["other_name"]
+            info["first_air_date"] = datetime.fromtimestamp(int(info["air_date"])).year
         
         if CALL_AI:
             seasons_info: list = self.call_tmdb(url=f'https://api.themoviedb.org/3/tv/{info["id"]}').json()["seasons"]
-            seasons_conten: list = print("调用 AI - 2") or '\n'.join([
+            seasons_conten: list = '\n'.join([
                 f'{j["name"]}: {i + 1}'
                 for i, j in enumerate(seasons_info[1:] if seasons_info[0]["name"] == "特别篇" else seasons_info)
             ])
-            self.season: int = int(self.call_ai(f"{name}\n\n{seasons_conten}\n\n{AI_PROMPT2}"))
+            self.season: int = print("调用 AI - 2") or int(self.call_ai(f"{name}\n\n{seasons_conten}\n\n{AI_PROMPT2}"))
         else:
             self.season: int  = int(match[2]) if match[2] else 1
-
+            
         return {
             "name": info["name"],
             "date": info["first_air_date"].split('-')[0] or "年份未知"
@@ -124,6 +133,8 @@ class AniSort(object):
         """
         for p in self.patterns:
             if match := p["regex"].search(name):
+                print(p["regex"].pattern)
+
                 if p["type"] == "SE_EP":
                     season, match_2 = int(match[1]), match[2]
                 else:
@@ -166,12 +177,12 @@ class AniSort(object):
     def move_files(self) -> None:
         """移动并重命名所有文件"""
         # 创建所有目标目录
-        dest_dirs: dict = {os.path.dirname(dest) for dest in self.table.values()}
-        [os.makedirs(d, exist_ok=True) for d in dest_dirs]
+        dest_dirs: dict = {Path(dest).parent for dest in self.table.values()}
+        [d.mkdir(parents=True, exist_ok=True) for d in dest_dirs]
 
         # 批量移动文件
         for src, dest in self.table.items():
-            if not(os.path.isfile(dest)):
+            if not(Path(dest).is_file()):
                 shutil.move(src, dest)
             else:
                 self.table[src] = Path(src).name
@@ -179,20 +190,27 @@ class AniSort(object):
             print(f"自动整理：{src}\n => {self.table[src]}")
 
         # 删除原文件（夹）
-        if self.path.exists():
-            if self.get_all_files(self.path):
-                shutil.move(self.path, f'{self.parent_dir}/Unknown_Files/{datetime.now().strftime("%Y%m%d%H%M%S")}_{self.path.name}')
-            elif self.path.is_dir():
-                shutil.rmtree(self.path)
-            else:
-                os.remove(self.path)
+        unknown_files_path: Path = Path(self.parent_dir) / "Unknown_Files"
+        try:
+            if self.path.exists():
+                if self.get_all_files(self.path):
+                    shutil.move(self.path, unknown_files_path / f'{self.path.name}_{datetime.now().strftime("%Y%m%d%H%M%S")}')
+                elif self.path.is_dir():
+                    shutil.rmtree(self.path)
+                else:
+                    self.path.unlink()
+        except:
+            pass
+
+        # 删除未知文件
+        if DELETE_UNKNOWN_FILES and unknown_files_path.exists():
+            shutil.rmtree(unknown_files_path)
 
         # 生成 .ignore 文件
         if GENERATE_IGNORE_FILE:
-            for root, _, _ in os.walk(self.parent_dir):
-                if os.path.basename(root) in ["Interviews", "Other", "Unknown_Files"]:
-                    with open(os.path.join(root, ".ignore"), 'w') as ignore_file:
-                        ignore_file.write('')
+            for root in Path(self.parent_dir).rglob("*/"):
+                if root.name in ["Interviews", "Other", "Unknown_Files"]:
+                    (root / ".ignore").write_text('', encoding="utf-8")
 
         # 写入对照表
         if GENERATE_COMPARISON_TABLE:
