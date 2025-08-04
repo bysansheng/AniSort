@@ -42,8 +42,7 @@ class AniSort(object):
         self.parent_dir: str = f"{str(parent_dir).rstrip('/') if parent_dir else self.path.parent}/{self.ani_name}"
 
         self.patterns: dict = [{
-            **p,
-            "regex": re.compile(p["regex"]),
+            **p, "regex": re.compile(p["regex"])
         } for p in PATTERN]
 
         self.table: dict = {
@@ -224,3 +223,4 @@ class AniSort(object):
 if __name__ == "__main__":
     while True:
         AniSort(input("请输入文件夹路径: ")).move_files()
+
