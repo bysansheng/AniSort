@@ -1,5 +1,3 @@
-from .ani_db.ani_db import AniDBUDPClient
-
 from .config import (
     TMDB_API_KEY,
     PATTERN,
@@ -27,8 +25,6 @@ SUFFIX_MAP = {
 
 AI_PROMPT1: str = "请你解析这个番剧文件名，最后只返回番剧对应的名称，不包含季数和标题，也不需要翻译，注意与字幕组区分，例如：[LKSUB][mono][11][1080P].mp4 => mono"
 AI_PROMPT2: str = "请你根据我发送的相关信息解析这个番剧文件名，最后只返回番剧的季数对应的阿拉伯数字，默认为 1，注意不要与集数搞混"
-
-ANIDB = AniDBUDPClient()
 
 
 class AniSort(object):
@@ -105,11 +101,7 @@ class AniSort(object):
                 if (_input := input("请输入你想选择的结果的序号：")).isdigit():
                     info: dict = res.json()["results"][int(_input)]
         except:
-            if not(info := ANIDB.search(name=query)):
-                raise Exception("无法在 TMDB 中搜索到该动漫，请更改文件夹名称后再试一次")
-            
-            info["name"] = info["romaji_name"] or info["kanji_name"] or info["english_name"] or info["other_name"]
-            info["first_air_date"] = datetime.fromtimestamp(int(info["air_date"])).year
+            raise Exception("无法在 TMDB 中搜索到该动漫，请更改文件夹名称后再试一次")
         
         if CALL_AI:
             seasons_info: list = self.call_tmdb(url=f'https://api.themoviedb.org/3/tv/{info["id"]}').json()["seasons"]
@@ -223,4 +215,5 @@ class AniSort(object):
 if __name__ == "__main__":
     while True:
         AniSort(input("请输入文件夹路径: ")).move_files()
+
 
