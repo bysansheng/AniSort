@@ -25,7 +25,7 @@ SUFFIX_MAP = {
 
 AI_PROMPT1: str = (
     "请你解析这个番剧文件名，最后只返回提取的番剧名称，不使用别名，不包含季数、集数和标题，也不需要翻译，注意与字幕组区分，"
-    '例如: \n"[LKSUB][mono][11][1080P]" 提取为 "mono"\n"[DMG&VCB-Studio] Kono Subarashii Sekai ni Bakuen wo! [1080p]" 提取为 "Kono Subarashii Sekai ni Bakuen wo!"'
+    '例如: \n"[LKSUB][mono][11][1080P]" 提取为 "mono"\n"[DMG&VCB-Studio] Kono Subarashii Sekai ni Bakuen wo! [1080p]" 提取为 "Kono Subarashii Sekai ni Bakuen wo!"\n"SAKAMOTO DAYS 1080p" 提取为 "SAKAMOTO DAYS"'
 )
 AI_PROMPT2: str = "请你根据我发送的相关信息解析这个番剧文件名，最后只返回番剧的季数对应的阿拉伯数字，默认为 1，注意不要与集数搞混"
 
@@ -218,6 +218,7 @@ class AniSort(object):
 if __name__ == "__main__":
     while True:
         AniSort(input("请输入文件夹路径: ")).move_files()
+
 
 
 
