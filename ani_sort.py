@@ -50,14 +50,26 @@ class AniSort(object):
         }
 
     def get_all_files(self, path: Path) -> list:
-        """获取文件夹内所有文件
+        """获取文件夹内所有文件，先按层级分类，再按相似度排序
         path: 文件路径
         """
-        return sorted(
-            [f for f in path.rglob("*") if f.is_file()],
-            key=lambda x: difflib.SequenceMatcher(None, str(x), str(path)).ratio(),
-            reverse=True
-        ) if path.is_dir() else [path]
+        if path.is_file():
+            return [path]
+        
+        files_by_level = {}
+        for f in path.rglob("*"):
+            if f.is_file():
+                files_by_level.setdefault(len(f.relative_to(path).parts), []).append(f)
+        
+        return [
+            file
+            for level in sorted(files_by_level.keys())
+            for file in sorted(
+                files_by_level[level],
+                key=lambda x: difflib.SequenceMatcher(None, str(x), str(path)).ratio(),
+                reverse=True
+            )
+        ]
     
     def call_ai(self, content: str):
         """调用 AI 进行番剧信息解析
@@ -218,6 +230,7 @@ class AniSort(object):
 if __name__ == "__main__":
     while True:
         AniSort(input("请输入文件夹路径: ")).move_files()
+
 
 
 
