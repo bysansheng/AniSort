@@ -1,4 +1,5 @@
-from .config import (
+from utils import sanitize_filename
+from config import (
     TMDB_API_KEY,
     PATTERN,
     TMDB_SELECTED,
@@ -25,7 +26,10 @@ SUFFIX_MAP = {
 
 AI_PROMPT1: str = (
     "请你解析这个番剧文件名，最后只返回提取的番剧名称，不使用别名，不包含季数、集数和标题，也不需要翻译，注意与字幕组区分，"
-    '例如: \n"[LKSUB][mono][11][1080P]" 提取为 "mono"\n"[DMG&VCB-Studio] Kono Subarashii Sekai ni Bakuen wo! [1080p]" 提取为 "Kono Subarashii Sekai ni Bakuen wo!"\n"SAKAMOTO DAYS 1080p" 提取为 "SAKAMOTO DAYS"'
+    "例如: \n"
+    '"[LKSUB][mono][11][1080P]" 提取为 "mono"\n'
+    '"[DMG&VCB-Studio] Kono Subarashii Sekai ni Bakuen wo! [1080p]" 提取为 "Kono Subarashii Sekai ni Bakuen wo!"\n'
+    '"SAKAMOTO DAYS 1080p" 提取为 "SAKAMOTO DAYS"'
 )
 AI_PROMPT2: str = "请你根据我发送的相关信息解析这个番剧文件名，最后只返回番剧的季数对应的阿拉伯数字，默认为 1，注意不要与集数搞混"
 
@@ -38,7 +42,8 @@ class AniSort(object):
         self.season: int = None
         self.ani_info: dict = self.get_ani_info(self.path.stem)
         self.ani_name: str = f'{self.ani_info["name"]} ({self.ani_info["date"]})'.replace(':', '：').replace('?', '？')
-        self.parent_dir: str = f"{str(parent_dir).rstrip('/') if parent_dir else self.path.parent}/{self.ani_name}"
+        self.parent_dir: str = (
+            f"{str(parent_dir).rstrip('/') if parent_dir else self.path.parent}/{sanitize_filename(self.ani_name)}")
 
         self.patterns: dict = [{
             **p, "regex": re.compile(p["regex"])
@@ -77,7 +82,7 @@ class AniSort(object):
         """
         try:
             res = requests.post(url="https://api.deepseek.com/chat/completions", headers={
-                "Authorization": "Bearer " + AI_API_KEY, "Content-Type": "application/json"
+                "Authorization": f"Bearer {AI_API_KEY}", "Content-Type": "application/json"
             }, json={
                 "model": "deepseek-reasoner", "messages": [{"role": "user", "content": content}]
             }, timeout=None)
@@ -116,7 +121,7 @@ class AniSort(object):
                 if (_input := input("请输入你想选择的结果的序号：")).isdigit():
                     info: dict = res.json()["results"][int(_input)]
         except:
-            raise Exception("无法在 TMDB 中搜索到该动漫，请更改文件夹名称后再试一次")
+            raise Exception("无法搜索到该动漫，请更改文件夹名称后再试一次")
         
         if CALL_AI:
             seasons_info: list = self.call_tmdb(url=f'https://api.themoviedb.org/3/tv/{info["id"]}').json()["seasons"]
@@ -139,8 +144,6 @@ class AniSort(object):
         """
         for p in self.patterns:
             if match := p["regex"].search(name):
-                print(p["regex"].pattern)
-
                 if p["type"] == "SE_EP":
                     season, match_2 = int(match[1]), match[2]
                 else:
@@ -230,6 +233,7 @@ class AniSort(object):
 if __name__ == "__main__":
     while True:
         AniSort(input("请输入文件夹路径: ")).move_files()
+
 
 
 
